@@ -46,8 +46,10 @@
   </target>
 
   <target name="dist" depends="jar">
-    <copy file="${readme.file.name}" todir="${dist.project.dir}"/>
-    <copy file="${license.file.name}" todir="${dist.project.dir}"/>
+    <copy file="${readme.file.name}" todir="${dist.project.dir}"
+          preservelastmodified="true"/>
+    <copy file="${license.file.name}" todir="${dist.project.dir}"
+          preservelastmodified="true"/>
   </target>
 
   <target name="run" depends="jar">

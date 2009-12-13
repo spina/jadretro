@@ -1,0 +1,56 @@
+2009-12-13  Ivan Maidanski <ivmai@mail.ru>
+
+	* build.xml (dist): Add "preservelastmodified" attribute for copy.
+	* ChangeLog: Initial SVN import.
+
+2009-12-13  Ivan Maidanski <ivmai@mail.ru>
+
+	* build.xml: Initial SVN import.
+
+2009-12-13  Ivan Maidanski <ivmai@mail.ru>
+
+	* jadretro.txt: Initial SVN import.
+
+2009-12-12  Ivan Maidanski <ivmai@mail.ru>
+
+	* GNU_GPL.txt: Initial SVN import.
+	* src/net/sf/jadretro/AccessFlags.java: Ditto.
+	* src/net/sf/jadretro/AttrCodeContent.java: Ditto.
+	* src/net/sf/jadretro/AttrContent.java: Ditto.
+	* src/net/sf/jadretro/AttributeEntry.java: Ditto.
+	* src/net/sf/jadretro/AttrInnerClassContent.java: Ditto.
+	* src/net/sf/jadretro/AttrLineNumsContent.java: Ditto.
+	* src/net/sf/jadretro/AttrLocalVarsContent.java: Ditto.
+	* src/net/sf/jadretro/AttrRawContent.java: Ditto.
+	* src/net/sf/jadretro/BadClassFileException.java: Ditto.
+	* src/net/sf/jadretro/ClassEntity.java: Ditto.
+	* src/net/sf/jadretro/ClassFile.java: Ditto.
+	* src/net/sf/jadretro/ClassLabeledEntity.java: Ditto.
+	* src/net/sf/jadretro/ClassOverflowException.java: Ditto.
+	* src/net/sf/jadretro/CodeAbsLabel.java: Ditto.
+	* src/net/sf/jadretro/ConstantPoolEntry.java: Ditto.
+	* src/net/sf/jadretro/ConstantRef.java: Ditto.
+	* src/net/sf/jadretro/ConstClassStringContent.java: Ditto.
+	* src/net/sf/jadretro/ConstFieldMethodNameType.java: Ditto.
+	* src/net/sf/jadretro/ConstIntContent.java: Ditto.
+	* src/net/sf/jadretro/ConstLongContent.java: Ditto.
+	* src/net/sf/jadretro/ConstPoolContent.java: Ditto.
+	* src/net/sf/jadretro/ConstUtfContent.java: Ditto.
+	* src/net/sf/jadretro/ExceptionCatch.java: Ditto.
+	* src/net/sf/jadretro/FieldMethodEntry.java: Ditto.
+	* src/net/sf/jadretro/InnerClassDesc.java: Ditto.
+	* src/net/sf/jadretro/LineNumberDesc.java: Ditto.
+	* src/net/sf/jadretro/LocalVariableDesc.java: Ditto.
+	* src/net/sf/jadretro/Main.java: Ditto.
+	* src/net/sf/jadretro/OpByteCode.java: Ditto.
+	* src/net/sf/jadretro/OpCodeConst.java: Ditto.
+	* src/net/sf/jadretro/OpCodeJump.java: Ditto.
+	* src/net/sf/jadretro/OpCodeSimple.java: Ditto.
+	* src/net/sf/jadretro/OpCodeSwitch.java: Ditto.
+	* src/net/sf/jadretro/OpCodeVar.java: Ditto.
+	* src/net/sf/jadretro/Main.java (showHelp): Set version to 1.6.
+	* jadretro.txt: Ditto.
+
+Local Variables:
+version-control: never
+End:
