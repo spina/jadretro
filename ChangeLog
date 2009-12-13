@@ -1,5 +1,9 @@
 2009-12-13  Ivan Maidanski <ivmai@mail.ru>
 
+	* build-win32-x86-jcgo.bat: New file.
+
+2009-12-13  Ivan Maidanski <ivmai@mail.ru>
+
 	* build.xml (dist): Add "preservelastmodified" attribute for copy.
 	* ChangeLog: Initial SVN import.
 
