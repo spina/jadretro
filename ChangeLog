@@ -1,3 +1,9 @@
+[1.6 release]
+
+2009-12-14  Ivan Maidanski <ivmai@mail.ru>
+
+	* htdocs/index.html: New file (also put to sftp:web.sf.net/htdocs).
+
 2009-12-14  Ivan Maidanski <ivmai@mail.ru>
 
 	* build-linux-x86-jcgo.sh: New file.

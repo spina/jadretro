@@ -1,0 +1,356 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML lang=en-us>
+<HEAD>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<META http-equiv="content-language" content="en-us">
+<META name="distribution" content="global">
+<META name="robots" content="all">
+
+<TITLE>JadRetro - a Java decompiler helper</TITLE>
+<LINK rev=made href="mailto:ivmai@mail.ru">
+<META name="author" content="Ivan Maidanski">
+
+<STYLE type="text/css"><!--
+
+HTML {
+ font-size: 100%;
+}
+
+BODY {
+ margin: 0.8em;
+ font-family: helvetica, sans-serif;
+ color: black;
+ background: #eff;
+}
+
+H1 {
+ clear: both;
+ margin-top: 0.8em;
+ text-align: center;
+ word-spacing: 0.3em;
+ font-weight: bold;
+ text-decoration: underline;
+}
+
+H3 {
+ clear: both;
+ text-align: left;
+ margin-left: 0.3em;
+ margin-bottom: 0.1em;
+}
+
+P {
+ text-align: justify;
+ text-indent: 1.3em;
+ margin-top: 0.2em;
+ margin-bottom: 0;
+}
+
+OL, UL {
+ text-align: left;
+ text-indent: 1.1em;
+ margin: 0;
+ list-style-position: inside;
+ padding: 0;
+}
+
+ACRONYM {
+ font-weight: bolder;
+ white-space: nowrap;
+}
+
+CODE {
+ font-family: monospace;
+ font-size: larger;
+}
+
+PRE {
+ padding: 0;
+ margin: 0 0 0 1.3em;
+}
+
+A:link { color: blue; }
+
+A:visited { color: purple; }
+
+A:hover { color: red; }
+
+A:active { color: green; }
+
+A {
+ white-space: nowrap;
+}
+
+A.external { }
+
+A.mailto {
+ color: teal;
+ font-style: oblique;
+}
+
+DIV {
+ min-width: 35em;
+ margin-top: 1em;
+}
+
+DIV.subsection {
+ margin-bottom: 0.9em;
+}
+
+DIV.download {
+ margin-bottom: 0.9em;
+ border-top: 1pt dashed blue;
+}
+
+DIV.license {
+ border-top: thin solid blue;
+ text-align: center;
+ font-size: 110%;
+ font-family: monospace;
+}
+
+DIV.page-footer {
+ border-top: thin solid blue;
+ margin-top: 1.2em;
+ text-align: center;
+}
+
+.copyright {
+ text-align: right;
+ white-space: nowrap;
+ font-size: x-small;
+ font-weight: lighter;
+}
+
+--></STYLE>
+
+</HEAD>
+<BODY>
+
+<A href="http://sourceforge.net/projects/jadretro/">
+<IMG src="http://sflogo.sourceforge.net/sflogo.php?group_id=293366&type=14"
+alt="get JadRetro at SourceForge.net" width=150 height=40 border=0></A>
+
+<H1 align=center>JadRetro</H1>
+
+<DIV class=subsection>
+<H3>Preface</H3>
+<P>JadRetro is a command-line utility that could help You
+to successfully decompile Java classes created by the modern Java compilers
+(of Java 1.4, Java 1.5 or later).
+<P>JadRetro operates by transforming the specified Java
+class files (if needed) into ones which could be processed correctly by an old
+Java decompiler (designed to work with classes of Java 1.3 or earlier).
+<P>JadRetro is not a decompiler itself, it is a class
+transformer helping some old (but good) Java decompilers to convert more class
+files and/or generate more correct source code.
+</DIV>
+
+<DIV class=download>
+<H3>Download</H3>
+<P>To get the latest <ACRONYM>JadRetro</ACRONYM> release binaries or the
+source code, please visit
+<A href="http://sourceforge.net/projects/jadretro/files/">"Browse files for
+JadRetro"</A>.
+</DIV>
+
+<DIV class=subsection>
+<H3>Disclaimer</H3>
+<P>You use this software at your own risk. This application is for legal use
+only. All rights reserved.
+</DIV>
+
+<DIV class=subsection>
+<H3>Installation</H3>
+<P>Download the binary distributive file appropriate to your host platform.
+<P>Extract the contents of the distributive file (preserving the directories
+structure) into any appropriate place (eg., <CODE>"C:\Program Files"</CODE>
+for Windows, <CODE>"/usr/share"</CODE> for Linux) on your hard drive. No other
+setup is required.
+<P>To uninstall the software, just remove "jadretro" directory.
+</DIV>
+
+<DIV class=subsection>
+<H3>Supported platforms</H3>
+<P><ACRONYM>JadRetro</ACRONYM> is officially built for the following
+platforms:
+<UL>
+<LI>JavaVM (<ACRONYM>J2SE</ACRONYM>/<ACRONYM>JDK</ACRONYM> v1.3+),
+<LI>Windows x86 (Win95/98/Me/NT/2000/XP/2003/Vista/Win7),
+<LI>Linux x86.
+</UL>
+<P>The native binary files (for Windows and Linux) are created using the
+<ACRONYM>JCGO</ACRONYM> tool and the corresponding C/C++ compiler
+(<ACRONYM>MinGW</ACRONYM> and <ACRONYM>GNU</ACRONYM>/Linux
+<ACRONYM>GCC</ACRONYM>, respectively).
+<P>Note for the JavaVM platform: <ACRONYM>JadRetro</ACRONYM> could be compiled
+to and works correctly even on an ancient <ACRONYM>JDK</ACRONYM> v1.0.2.
+</DIV>
+
+<DIV class=subsection>
+<H3>Usage directions</H3>
+<P>The Java classes to be processed are specified (in the command line) by
+their file path names; if a directory (folder) path name is specified instead
+then all the classes contained in it (or in its sub-directories recursively)
+are processed; the wildcards are allowed for path names.
+<P>The allowed command-line options are:
+<UL>
+<LI>-b - Keep all (do not process) Java bridge methods (otherwise some of Java
+1.5 bridge methods may be removed if redundant);
+<LI>-l - Do not adjust local class names (i.e., do not map names of
+method-local classes to that matching the style of Java 1.3);
+<LI>-c - Change class version to Java 1.3 if greater (otherwise major and
+minor "version" fields of class files are not changed);
+<LI>-d <directory> - Specify output base (root) folder for the modified class
+files (unchanged files are not copied to it, if this option is not specified
+then original class files are overwritten if modified by
+<ACRONYM>JadRetro</ACRONYM>).
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>Tested with</H3>
+<P><ACRONYM>JadRetro</ACRONYM> is tested with class files created by Sun
+"<ACRONYM>javac</ACRONYM>" (v1.3.1, v1.4.1, v1.4.2, v1.5.0, v1.6.0).
+<P><ACRONYM>JadRetro</ACRONYM> is tested only with the well-known
+"<ACRONYM>Jad</ACRONYM>" tool (the fast Java Decompiler) v1.5.8g.
+</DIV>
+
+<DIV class=subsection>
+<H3>Notes</H3>
+<P>Tips for use with "Jad" tool:
+<OL>
+<LI><ACRONYM>JadRetro</ACRONYM> "-b", "-c" and "-l" options are not required
+(normally);
+<LI><ACRONYM>Jad</ACRONYM> "-safe" option should not be used (at least for
+v1.5.8g - <ACRONYM>Jad</ACRONYM> produces incorrect source for some code
+constructions with it).
+</OL>
+<P>Sample usage (for Windows):
+<PRE><CODE>
+copy /b someLocation\somePackage\SomeClass*.class tempLocation
+jadretro tempLocation\SomeClass*.class
+jad tempLocation\SomeClass.class
+</CODE></PRE></DIV>
+
+<DIV class=subsection>
+<H3>Application limitations</H3>
+<P>While <ACRONYM>JadRetro</ACRONYM> improves the "quality" of the source code
+produced by a Java decompiler, it does not help in all cases (i.e., not all
+classes could be decompiled and not all decompiled classes could be compiled
+back without modifications).
+</DIV>
+
+<DIV class=subsection>
+<H3>Exit codes</H3>
+<P>The application terminates execution with one of the error codes:
+<UL>
+<LI>0 - no error (all done),
+<LI>1 - cannot list directory,
+<LI>2 - file not found,
+<LI>3 - file read error,
+<LI>4 - unexpected end of file,
+<LI>5 - invalid class file,
+<LI>6 - cannot open file for writing,
+<LI>7 - file write error.
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>User's feedback</H3>
+<P>Any questions, suggestions, bug reports and patches are welcomed at the
+<ACRONYM>JadRetro</ACRONYM>
+<A href="http://sourceforge.net/projects/jadretro/develop/">site tracker</A>
+(hosted at SourceForge.net).
+</DIV>
+
+<DIV class=subsection>
+<H3>Appendix A</H3>
+<P>Links to <ACRONYM>Jad</ACRONYM> and related tools:
+<UL>
+<LI><A class=external target="_blank" href="http://www.varaneckas.com/jad/">Jad</A>
+(Java Decompiler)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/jadclipse/">JadClipse</A>
+(a plug-in integrating <ACRONYM>Jad</ACRONYM> with Eclipse
+<ACRONYM>IDE</ACRONYM>)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/ideajad/">IdeaJad</A>
+(IntelliJ <ACRONYM>IDEA</ACRONYM> plugin for java class decompilation using
+<ACRONYM>Jad</ACRONYM>)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/jad-align/">JadAlign</A>
+(source aligner/reformatter for java files decompiled by
+<ACRONYM>Jad</ACRONYM>)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/jdc-el/">Jad mode for Emacs</A>
+(Emacs integration with <ACRONYM>Jad</ACRONYM>)
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>Appendix B</H3>
+<P>Links to other Java decompilers:
+<UL>
+<LI><A class=external target="_blank" href="http://java.decompiler.free.fr">JD-GUI</A>
+(Yet another fast Java decompiler)
+<LI><A class=external target="_blank" href="http://jode.sourceforge.net">JODE</A>
+(Java Optimize and Decompile Environment)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/cupofjoe/">CupOfJoe</A>
+(a Java Decompiler supporting Java 5, disassembler and bytecode debugger)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/javad/">javad</A>
+(Java decompiler written in <ACRONYM>C++</ACRONYM> aimed to decompile
+<ACRONYM>JDK</ACRONYM> v1.6 class files)
+<LI><A class=external target="_blank" href="http://jdec.sourceforge.net">JDec</A>
+(Java Decompiler)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/dcompiler/">"dcompiler"</A>
+(<ACRONYM>JADO</ACRONYM> - Java Decompiler and Obfuscator)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/debyte/">debyte</A>
+(a Java Decompiler)
+<LI><A class=external target="_blank" href="http://jreversepro.blogspot.com">JReversePro</A>
+(Java Decompiler)
+<LI><A class=external target="_blank" href="http://sourceforge.net/projects/decaffinator/">Decaffinator</A>
+(a command line Java decompiler written in pure Java)
+<LI><A class=external target="_blank" href="http://pdr.cx/projects/hbd/">HBD</A>
+(The HomeBrew Decompiler)
+<LI><A class=external target="_blank" href="http://www.sothink.com/product/javadecompiler/">Sothink Java Decompiler</A>
+(SourceTech Java decompiler)
+<LI><A class=external target="_blank" href="http://www.sable.mcgill.ca/dava/">Dava</A>
+(Java Decompiler)
+<LI><A class=external target="_blank" href="http://jclazz.sourceforge.net">Java Clazz Utils</A>
+(Java class files manipulation utility which includes Java classes viewer and
+decompiler)
+<LI><A class=external target="_blank" href="http://dedexer.sourceforge.net">Dedexer</A>
+(a disassembler tool for <ACRONYM>Android</ACRONYM> <ACRONYM>DEX</ACRONYM>
+files)
+</UL></DIV>
+
+<DIV class=license>
+<H3>License</H3>
+<P>This is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+<P>This software is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License (GPL) for more details.
+<P>You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+<P>Linking this library statically or dynamically with other modules is
+making a combined work based on this library. Thus, the terms and
+conditions of the GNU General Public License cover the whole
+combination.
+<P>As a special exception, the copyright holders of this library give you
+permission to link this library with independent modules to produce an
+executable, regardless of the license terms of these independent
+modules, and to copy and distribute the resulting executable under
+terms of your choice, provided that you also meet, for each linked
+independent module, the terms and conditions of the license of that
+module. An independent module is a module which is not derived from
+or based on this library. If you modify this library, you may extend
+this exception to your version of the library, but you are not
+obligated to do so. If you do not wish to do so, delete this
+exception statement from your version.
+</DIV>
+
+<DIV class=page-footer>
+<P class=copyright>&copy; 2007-2008
+<A class=mailto href="mailto:ivmai@mail.ru">Ivan Maidanski</A>
+</DIV>
+
+</BODY></HTML>
