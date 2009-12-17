@@ -17,8 +17,6 @@
   <property name="classes.dir" value="${dist.dir}/.classes"/>
 
   <property name="dist.project.dir" value="${dist.dir}/${project.unix.name}"/>
-  <property name="dist.project.tar.file"
-            value="${dist.project.dir}-${project.version.underscore}.tar"/>
   <property name="main.jar.file"
             value="${dist.project.dir}/${project.unix.name}.jar"/>
 
