@@ -88,6 +88,7 @@ public final class Main
   System.out.println(" -c " + " Change class version to Java 1.3 if greater");
   System.out.println(" -d <directory> " +
    " Specify output base folder for the modified class files");
+  System.out.println(" -q " + " Reduce the verbosity of the output");
   System.out.println("");
   System.out.println(" " +
    " JadRetro is a command-line utility that could help You to successfully");
@@ -127,6 +128,7 @@ public final class Main
   boolean noAdjLocClassNames = false;
   boolean setOldVer = false;
   File outdir = null;
+  boolean loud = true;
   do
   {
    if (args[i].equals("-b"))
@@ -141,9 +143,15 @@ public final class Main
         setOldVer = true;
         else
         {
-         if (!args[i].equals("-d") || args.length - 1 == i || outdir != null)
-          break;
-         outdir = new File(args[++i]);
+         if (args[i].equals("-q"))
+          loud = false;
+          else
+          {
+           if (!args[i].equals("-d") || args.length - 1 == i ||
+               outdir != null)
+            break;
+           outdir = new File(args[++i]);
+          }
         }
       }
     }
@@ -233,7 +241,8 @@ public final class Main
           {
            ByteArrayOutputStream baos = new ByteArrayOutputStream();
            classFile.writeTo(baos);
-           System.out.println("Class transformed: " + dottedClassName);
+           if (loud)
+            System.out.println("Class transformed: " + dottedClassName);
            String parent = outfile.getParent();
            if (parent != null)
             (new File(parent)).mkdirs();
@@ -299,7 +308,10 @@ public final class Main
    return 1;
   }
   if (classesCount != 0)
-   System.out.println("Done.");
+  {
+   if (loud)
+    System.out.println("Done.");
+  }
    else System.err.println("Error: no files processed!");
   return 0;
  }

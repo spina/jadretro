@@ -81,6 +81,7 @@ minor "version" fields of class files are not changed);
 files (unchanged files are not copied to it, if this option is not
 specified then original class files are overwritten if modified by
 JadRetro).
+-q - Be more quiet (reduce the verbosity of the output)
 
 Tested with
 -----------
