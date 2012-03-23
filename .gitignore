@@ -1,0 +1,12 @@
+# Files and folders to be ignored by Git (including subfolders).
+
+# Binary auto-generated files
+*.class
+*.jar
+/.build/
+/.dist-*/
+/bin/
+
+# Eclipse misc config and auto-generated files
+/.checkstyle
+/.codepro/
