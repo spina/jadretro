@@ -17,7 +17,7 @@
   </licenses>
 
   <scm>
-    <url>https://jadretro.svn.sourceforge.net/svnroot/jadretro</url>
+    <url>git://jadretro.git.sourceforge.net/gitroot/jadretro/jadretro</url>
   </scm>
 
   <dependencies>
@@ -25,13 +25,14 @@
 
   <developers>
     <developer>
-    <id>Ivan</id>
-    <name>Ivan Maidanski</name>
+      <id>ivmai</id>
+      <name>Ivan Maidanski</name>
+      <email>ivmai@mail.ru</email>
     </developer>
     <developer>
-    <id>Spina</id>
-    <name>Andrew Spina</name>
-    <email>aispina@gmail.com</email>
+      <id>Spina</id>
+      <name>Andrew Spina</name>
+      <email>aispina@gmail.com</email>
     </developer>
   </developers>
 
