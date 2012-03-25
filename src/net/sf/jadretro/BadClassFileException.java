@@ -39,4 +39,7 @@ package net.sf.jadretro;
 
 import java.io.IOException;
 
-final class BadClassFileException extends IOException {}
+final class BadClassFileException extends IOException {
+
+	private static final long serialVersionUID = -8415475322501353385L;
+}

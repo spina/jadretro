@@ -39,4 +39,7 @@ package net.sf.jadretro;
 
 import java.io.IOException;
 
-final class ClassOverflowException extends IOException {}
+final class ClassOverflowException extends IOException {
+
+	private static final long serialVersionUID = -5219685654211983790L;
+}
