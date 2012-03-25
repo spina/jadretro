@@ -1,8 +1,10 @@
                JadRetro - a Java decompiler helper
                -----------------------------------
-              Brief information about JadRetro v1.6
+                Brief information about JadRetro
            --------------------------------------------
-           (c) 2007-2008 Ivan Maidanski <ivmai@mail.ru>
+           (c) 2007-2012 Ivan Maidanski <ivmai@mail.ru>
+
+Version: 1.6.1 (internal)
 
 
 Project home page

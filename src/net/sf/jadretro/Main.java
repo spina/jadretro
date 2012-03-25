@@ -2,7 +2,7 @@
  * @(#) src/net/sf/jadretro/Main.java --
  * a part of JadRetro source (the main class).
  **
- * Copyright (C) 2007-2008 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2007-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -73,9 +73,9 @@ public final class Main
 
  private static void showHelp()
  {
-  System.out.println("JadRetro v1.6 - a Java decompiler helper");
+  System.out.println("JadRetro v1.6.1 - a Java decompiler helper");
   System.out.println(
-   "Copyright (C) 2007-2008 Ivan Maidanski <ivmai@mail.ru>");
+   "Copyright (C) 2007-2012 Ivan Maidanski <ivmai@mail.ru>");
   System.out.println(
    "This is free software. All rights reserved. No warranties.");
   System.out.println();
