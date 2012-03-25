@@ -39,52 +39,54 @@ package net.sf.jadretro;
 
 import java.util.Vector;
 
-abstract class ClassLabeledEntity extends ClassEntity
-{
+abstract class ClassLabeledEntity extends ClassEntity {
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException {}
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+	}
 
- static void mapLabelsPcForArray(Vector entries, int[] indices)
-  throws BadClassFileException
- {
-  int count = entries.size();
-  for (int i = 0; i < count; i++)
-   ((ClassLabeledEntity) entries.elementAt(i)).mapLabelsPc(indices);
- }
+	static void mapLabelsPcForArray(Vector entries, int[] indices)
+			throws BadClassFileException {
+		int count = entries.size();
+		for (int i = 0; i < count; i++) {
+			((ClassLabeledEntity) entries.elementAt(i)).mapLabelsPc(indices);
+		}
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  return false;
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		return false;
+	}
 
- static boolean removeLabelsInRangeForArray(Vector entries, int startIndex,
-   int endIndex)
- {
-  for (int i = entries.size() - 1; i >= 0; i--)
-   if (((ClassLabeledEntity) entries.elementAt(i)).removeLabelsInRange(
-       startIndex, endIndex))
-    entries.removeElementAt(i);
-  return entries.size() == 0;
- }
+	static boolean removeLabelsInRangeForArray(Vector entries, int startIndex,
+			int endIndex) {
+		for (int i = entries.size() - 1; i >= 0; i--) {
+			if (((ClassLabeledEntity) entries.elementAt(i))
+					.removeLabelsInRange(startIndex, endIndex)) {
+				entries.removeElementAt(i);
+			}
+		}
+		return entries.size() == 0;
+	}
 
- void incLabelIndices(int startIndex, int incValue) {}
+	void incLabelIndices(int startIndex, int incValue) {
+	}
 
- static void incLabelIndicesForArray(Vector entries, int startIndex,
-   int incValue)
- {
-  int count = entries.size();
-  for (int i = 0; i < count; i++)
-   ((ClassLabeledEntity) entries.elementAt(i)).incLabelIndices(startIndex,
-    incValue);
- }
+	static void incLabelIndicesForArray(Vector entries, int startIndex,
+			int incValue) {
+		int count = entries.size();
+		for (int i = 0; i < count; i++) {
+			((ClassLabeledEntity) entries.elementAt(i)).incLabelIndices(
+					startIndex, incValue);
+		}
+	}
 
- void rebuildLabelsPc(int[] offsets) {}
+	void rebuildLabelsPc(int[] offsets) {
+	}
 
- static void rebuildLabelsPcForArray(Vector entries, int[] offsets)
- {
-  int count = entries.size();
-  for (int i = 0; i < count; i++)
-   ((ClassLabeledEntity) entries.elementAt(i)).rebuildLabelsPc(offsets);
- }
+	static void rebuildLabelsPcForArray(Vector entries, int[] offsets) {
+		int count = entries.size();
+		for (int i = 0; i < count; i++) {
+			((ClassLabeledEntity) entries.elementAt(i))
+					.rebuildLabelsPc(offsets);
+		}
+	}
 }

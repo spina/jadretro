@@ -41,49 +41,41 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ConstFieldMethodNameType extends ConstPoolContent
-{
+final class ConstFieldMethodNameType extends ConstPoolContent {
 
- private /* final */ ConstantRef classOrName;
+	private/* final */ConstantRef classOrName;
 
- private /* final */ ConstantRef descriptor;
+	private/* final */ConstantRef descriptor;
 
- ConstFieldMethodNameType(ConstantRef classOrName, ConstantRef descriptor)
- {
-  this.classOrName = classOrName;
-  this.descriptor = descriptor;
- }
+	ConstFieldMethodNameType(ConstantRef classOrName, ConstantRef descriptor) {
+		this.classOrName = classOrName;
+		this.descriptor = descriptor;
+	}
 
- ConstFieldMethodNameType(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  classOrName = new ConstantRef(in, classFile, false);
-  descriptor = new ConstantRef(in, classFile, false);
- }
+	ConstFieldMethodNameType(InputStream in, ClassFile classFile)
+			throws IOException {
+		classOrName = new ConstantRef(in, classFile, false);
+		descriptor = new ConstantRef(in, classFile, false);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  classOrName.writeTo(out);
-  descriptor.writeTo(out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		classOrName.writeTo(out);
+		descriptor.writeTo(out);
+	}
 
- boolean isEqualTo(ConstPoolContent other)
- {
-  if (!(other instanceof ConstFieldMethodNameType))
-   return false;
-  ConstFieldMethodNameType otherContent = (ConstFieldMethodNameType) other;
-  return classOrName.isEqualTo(otherContent.classOrName) &&
-          descriptor.isEqualTo(otherContent.descriptor);
- }
+	boolean isEqualTo(ConstPoolContent other) {
+		if (!(other instanceof ConstFieldMethodNameType))
+			return false;
+		ConstFieldMethodNameType otherContent = (ConstFieldMethodNameType) other;
+		return classOrName.isEqualTo(otherContent.classOrName)
+				&& descriptor.isEqualTo(otherContent.descriptor);
+	}
 
- ConstantRef classOrName()
- {
-  return classOrName;
- }
+	ConstantRef classOrName() {
+		return classOrName;
+	}
 
- ConstantRef descriptor()
- {
-  return descriptor;
- }
+	ConstantRef descriptor() {
+		return descriptor;
+	}
 }

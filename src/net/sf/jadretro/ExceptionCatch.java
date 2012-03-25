@@ -41,108 +41,88 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ExceptionCatch extends ClassLabeledEntity
-{
+final class ExceptionCatch extends ClassLabeledEntity {
 
- private /* final */ CodeAbsLabel start;
+	private/* final */CodeAbsLabel start;
 
- private /* final */ CodeAbsLabel end;
+	private/* final */CodeAbsLabel end;
 
- private /* final */ CodeAbsLabel handler;
+	private/* final */CodeAbsLabel handler;
 
- private /* final */ ConstantRef catchType;
+	private/* final */ConstantRef catchType;
 
- ExceptionCatch(int startIndex, int endIndex, int handlerIndex,
-   ConstantRef catchType)
- {
-  (start = new CodeAbsLabel()).setNewIndex(startIndex);
-  (end = new CodeAbsLabel()).setNewIndex(endIndex);
-  (handler = new CodeAbsLabel()).setNewIndex(handlerIndex);
-  this.catchType = catchType;
- }
+	ExceptionCatch(int startIndex, int endIndex, int handlerIndex,
+			ConstantRef catchType) {
+		(start = new CodeAbsLabel()).setNewIndex(startIndex);
+		(end = new CodeAbsLabel()).setNewIndex(endIndex);
+		(handler = new CodeAbsLabel()).setNewIndex(handlerIndex);
+		this.catchType = catchType;
+	}
 
- ExceptionCatch(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  start = new CodeAbsLabel(in, null);
-  end = new CodeAbsLabel(in, null);
-  handler = new CodeAbsLabel(in, null);
-  catchType = new ConstantRef(in, classFile, true);
- }
+	ExceptionCatch(InputStream in, ClassFile classFile) throws IOException {
+		start = new CodeAbsLabel(in, null);
+		end = new CodeAbsLabel(in, null);
+		handler = new CodeAbsLabel(in, null);
+		catchType = new ConstantRef(in, classFile, true);
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  start.mapLabelsPc(indices, false);
-  end.mapLabelsPc(indices, true);
-  if (start.getIndex() >= end.getIndex())
-   throw new BadClassFileException();
-  handler.mapLabelsPc(indices, false);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		start.mapLabelsPc(indices, false);
+		end.mapLabelsPc(indices, true);
+		if (start.getIndex() >= end.getIndex())
+			throw new BadClassFileException();
+		handler.mapLabelsPc(indices, false);
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  if (handler.isInRange(startIndex, endIndex))
-   return true;
-  if (start.isInRange(startIndex, endIndex))
-  {
-   if (end.isInRange(startIndex, endIndex + 1))
-    return true;
-   start.setNewIndex(endIndex);
-  }
-   else
-   {
-    if (end.isInRange(startIndex, endIndex))
-     end.setNewIndex(endIndex);
-   }
-  return false;
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		if (handler.isInRange(startIndex, endIndex))
+			return true;
+		if (start.isInRange(startIndex, endIndex)) {
+			if (end.isInRange(startIndex, endIndex + 1))
+				return true;
+			start.setNewIndex(endIndex);
+		} else if (end.isInRange(startIndex, endIndex)) {
+			end.setNewIndex(endIndex);
+		}
+		return false;
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  start.incLabelIndices(startIndex, incValue);
-  end.incLabelIndices(startIndex, incValue);
-  handler.incLabelIndices(startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		start.incLabelIndices(startIndex, incValue);
+		end.incLabelIndices(startIndex, incValue);
+		handler.incLabelIndices(startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  start.rebuildLabelsPc(offsets);
-  end.rebuildLabelsPc(offsets);
-  handler.rebuildLabelsPc(offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		start.rebuildLabelsPc(offsets);
+		end.rebuildLabelsPc(offsets);
+		handler.rebuildLabelsPc(offsets);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  start.writeTo(out);
-  end.writeTo(out);
-  handler.writeTo(out);
-  catchType.writeTo(out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		start.writeTo(out);
+		end.writeTo(out);
+		handler.writeTo(out);
+		catchType.writeTo(out);
+	}
 
- CodeAbsLabel start()
- {
-  return start;
- }
+	CodeAbsLabel start() {
+		return start;
+	}
 
- CodeAbsLabel end()
- {
-  return end;
- }
+	CodeAbsLabel end() {
+		return end;
+	}
 
- CodeAbsLabel handler()
- {
-  return handler;
- }
+	CodeAbsLabel handler() {
+		return handler;
+	}
 
- boolean isAnyType()
- {
-  return catchType.isZero();
- }
+	boolean isAnyType() {
+		return catchType.isZero();
+	}
 
- boolean isSameCatchType(ExceptionCatch other)
- {
-  return catchType.isEqualTo(other.catchType);
- }
+	boolean isSameCatchType(ExceptionCatch other) {
+		return catchType.isEqualTo(other.catchType);
+	}
 }

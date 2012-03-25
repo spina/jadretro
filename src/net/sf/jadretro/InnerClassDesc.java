@@ -41,49 +41,40 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class InnerClassDesc extends ClassEntity
-{
+final class InnerClassDesc extends ClassEntity {
 
- private /* final */ ConstantRef innerClass;
+	private/* final */ConstantRef innerClass;
 
- private /* final */ ConstantRef outerClass;
+	private/* final */ConstantRef outerClass;
 
- private /* final */ ConstantRef innerName;
+	private/* final */ConstantRef innerName;
 
- private /* final */ AccessFlags accessFlags;
+	private/* final */AccessFlags accessFlags;
 
- InnerClassDesc(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  innerClass = new ConstantRef(in, classFile, true);
-  outerClass = new ConstantRef(in, classFile, true);
-  innerName = new ConstantRef(in, classFile, true);
-  accessFlags = new AccessFlags(in);
- }
+	InnerClassDesc(InputStream in, ClassFile classFile) throws IOException {
+		innerClass = new ConstantRef(in, classFile, true);
+		outerClass = new ConstantRef(in, classFile, true);
+		innerName = new ConstantRef(in, classFile, true);
+		accessFlags = new AccessFlags(in);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  innerClass.writeTo(out);
-  outerClass.writeTo(out);
-  innerName.writeTo(out);
-  accessFlags.writeTo(out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		innerClass.writeTo(out);
+		outerClass.writeTo(out);
+		innerName.writeTo(out);
+		accessFlags.writeTo(out);
+	}
 
- String getClassNameValue(boolean isOuter)
-  throws BadClassFileException
- {
-  ConstantRef classConst = isOuter ? outerClass : innerClass;
-  return classConst.isZero() ? null : classConst.classOrName().utfValue();
- }
+	String getClassNameValue(boolean isOuter) throws BadClassFileException {
+		ConstantRef classConst = isOuter ? outerClass : innerClass;
+		return classConst.isZero() ? null : classConst.classOrName().utfValue();
+	}
 
- boolean isAnonymousName()
- {
-  return innerName.isZero();
- }
+	boolean isAnonymousName() {
+		return innerName.isZero();
+	}
 
- AccessFlags accessFlags()
- {
-  return accessFlags;
- }
+	AccessFlags accessFlags() {
+		return accessFlags;
+	}
 }

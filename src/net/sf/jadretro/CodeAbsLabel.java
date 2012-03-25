@@ -41,122 +41,100 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class CodeAbsLabel extends ClassLabeledEntity
-{
+final class CodeAbsLabel extends ClassLabeledEntity {
 
- private int targetPc;
+	private int targetPc;
 
- private int index = -1;
+	private int index = -1;
 
- CodeAbsLabel() {}
+	CodeAbsLabel() {
+	}
 
- CodeAbsLabel(InputStream in, CodeAbsLabel other)
-  throws IOException
- {
-  targetPc = readUnsignedShort(in) + (other != null ? other.getPc() : 0);
- }
+	CodeAbsLabel(InputStream in, CodeAbsLabel other) throws IOException {
+		targetPc = readUnsignedShort(in) + (other != null ? other.getPc() : 0);
+	}
 
- CodeAbsLabel(InputStream in, boolean isWide, int curPc)
-  throws IOException
- {
-  if ((targetPc = (isWide ? readInt(in) : readShort(in)) + curPc) < 0)
-   throw new BadClassFileException();
- }
+	CodeAbsLabel(InputStream in, boolean isWide, int curPc) throws IOException {
+		if ((targetPc = (isWide ? readInt(in) : readShort(in)) + curPc) < 0)
+			throw new BadClassFileException();
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  mapLabelsPc(indices, false);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		mapLabelsPc(indices, false);
+	}
 
- void mapLabelsPc(int[] indices, boolean isMaxAllowed)
-  throws BadClassFileException
- {
-  if (targetPc >= 0)
-  {
-   if (indices.length - (isMaxAllowed ? 0 : 1) <= targetPc ||
-       (index = indices[targetPc]) < 0)
-    throw new BadClassFileException();
-   targetPc = -1;
-  }
- }
+	void mapLabelsPc(int[] indices, boolean isMaxAllowed)
+			throws BadClassFileException {
+		if (targetPc >= 0) {
+			if (indices.length - (isMaxAllowed ? 0 : 1) <= targetPc
+					|| (index = indices[targetPc]) < 0)
+				throw new BadClassFileException();
+			targetPc = -1;
+		}
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  if (index >= startIndex)
-   setNewIndex(index + incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		if (index >= startIndex) {
+			setNewIndex(index + incValue);
+		}
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  if (index < 0 || index >= offsets.length)
-   throw new IllegalArgumentException();
-  targetPc = offsets[index];
- }
+	void rebuildLabelsPc(int[] offsets) {
+		if (index < 0 || index >= offsets.length)
+			throw new IllegalArgumentException();
+		targetPc = offsets[index];
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeRelTo(out, null);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeRelTo(out, null);
+	}
 
- void writeRelTo(OutputStream out, CodeAbsLabel other)
-  throws IOException
- {
-  writeCheckedUShort(out, getPc() - (other != null ? other.getPc() : 0));
- }
+	void writeRelTo(OutputStream out, CodeAbsLabel other) throws IOException {
+		writeCheckedUShort(out, getPc() - (other != null ? other.getPc() : 0));
+	}
 
- void writeRelTo(OutputStream out, boolean isWide, int curPc)
-  throws IOException
- {
-  if (isWide)
-   writeInt(out, getPc() - curPc);
-   else
-   {
-    int value = getPc() - curPc;
-    if (((short) value) != value)
-     throw new ClassOverflowException();
-    writeShort(out, value);
-   }
- }
+	void writeRelTo(OutputStream out, boolean isWide, int curPc)
+			throws IOException {
+		if (isWide) {
+			writeInt(out, getPc() - curPc);
+		} else {
+			int value = getPc() - curPc;
+			if (((short) value) != value)
+				throw new ClassOverflowException();
+			writeShort(out, value);
+		}
+	}
 
- private int getPc()
- {
-  return targetPc;
- }
+	private int getPc() {
+		return targetPc;
+	}
 
- boolean isEqualTo(CodeAbsLabel other, int startIndex, int deltaIndex,
-   int endIndex2, int[] indexRef)
- {
-  int diff = other.index - index;
-  if (diff != 0)
-  {
-   if (other.index != endIndex2)
-    return diff == deltaIndex && index >= startIndex &&
-            other.index < endIndex2;
-   if (indexRef[0] != index)
-   {
-    if (indexRef[0] >= 0)
-     return false;
-    indexRef[0] = index;
-   }
-  }
-  return true;
- }
+	boolean isEqualTo(CodeAbsLabel other, int startIndex, int deltaIndex,
+			int endIndex2, int[] indexRef) {
+		int diff = other.index - index;
+		if (diff != 0) {
+			if (other.index != endIndex2)
+				return diff == deltaIndex && index >= startIndex
+						&& other.index < endIndex2;
+			if (indexRef[0] != index) {
+				if (indexRef[0] >= 0)
+					return false;
+				indexRef[0] = index;
+			}
+		}
+		return true;
+	}
 
- boolean isInRange(int startIndex, int endIndex)
- {
-  return index >= startIndex && index < endIndex;
- }
+	boolean isInRange(int startIndex, int endIndex) {
+		return index >= startIndex && index < endIndex;
+	}
 
- int getIndex()
- {
-  return index;
- }
+	int getIndex() {
+		return index;
+	}
 
- void setNewIndex(int index)
- {
-  this.index = index;
-  targetPc = -1;
- }
+	void setNewIndex(int index) {
+		this.index = index;
+		targetPc = -1;
+	}
 }

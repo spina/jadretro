@@ -37,4 +37,5 @@
 
 package net.sf.jadretro;
 
-abstract class AttrContent extends ClassLabeledEntity {}
+abstract class AttrContent extends ClassLabeledEntity {
+}

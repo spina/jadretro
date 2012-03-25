@@ -39,122 +39,97 @@ package net.sf.jadretro;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.Hashtable;
 
-abstract class OpByteCode extends ClassLabeledEntity
-{
+abstract class OpByteCode extends ClassLabeledEntity {
 
- abstract int getLength(int curPc);
+	abstract int getLength(int curPc);
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  throw new IllegalArgumentException();
- }
+	void writeTo(OutputStream out) throws IOException {
+		throw new IllegalArgumentException();
+	}
 
- void writeRelTo(OutputStream out, int curPc)
-  throws IOException
- {
-  writeTo(out);
- }
+	void writeRelTo(OutputStream out, int curPc) throws IOException {
+		writeTo(out);
+	}
 
- abstract boolean isEqualTo(OpByteCode other, int startIndex, int deltaIndex,
-   int endIndex2, int[] indexRef, int[] deltaVarRef, int argSlots,
-   Hashtable diffVarsSet);
+	abstract boolean isEqualTo(OpByteCode other, int startIndex,
+			int deltaIndex, int endIndex2, int[] indexRef, int[] deltaVarRef,
+			int argSlots, Hashtable diffVarsSet);
 
- boolean isAstoreAload(boolean isStore)
- {
-  return false;
- }
+	boolean isAstoreAload(boolean isStore) {
+		return false;
+	}
 
- boolean isAthrow()
- {
-  return false;
- }
+	boolean isAthrow() {
+		return false;
+	}
 
- boolean isCheckcast()
- {
-  return false;
- }
+	boolean isCheckcast() {
+		return false;
+	}
 
- boolean isInvokeMethod()
- {
-  return false;
- }
+	boolean isInvokeMethod() {
+		return false;
+	}
 
- boolean isInvokestaticSpecial(boolean isStatic)
- {
-  return false;
- }
+	boolean isInvokestaticSpecial(boolean isStatic) {
+		return false;
+	}
 
- boolean isInvokevirtual()
- {
-  return false;
- }
+	boolean isInvokevirtual() {
+		return false;
+	}
 
- boolean isJsrGoto(boolean isJsr)
- {
-  return false;
- }
+	boolean isJsrGoto(boolean isJsr) {
+		return false;
+	}
 
- boolean isLdc()
- {
-  return false;
- }
+	boolean isLdc() {
+		return false;
+	}
 
- boolean isMonitorexit()
- {
-  return false;
- }
+	boolean isMonitorexit() {
+		return false;
+	}
 
- boolean isPutGetstatic(boolean isPut)
- {
-  return false;
- }
+	boolean isPutGetstatic(boolean isPut) {
+		return false;
+	}
 
- boolean isPutfield()
- {
-  return false;
- }
+	boolean isPutfield() {
+		return false;
+	}
 
- boolean isRetXLoad(boolean isRet)
- {
-  return false;
- }
+	boolean isRetXLoad(boolean isRet) {
+		return false;
+	}
 
- boolean isXConstZero()
- {
-  return false;
- }
+	boolean isXConstZero() {
+		return false;
+	}
 
- boolean isXReturn()
- {
-  return false;
- }
+	boolean isXReturn() {
+		return false;
+	}
 
- int getVarIndex()
- {
-  return -1;
- }
+	int getVarIndex() {
+		return -1;
+	}
 
- ConstantRef getConstRef()
- {
-  return null;
- }
+	ConstantRef getConstRef() {
+		return null;
+	}
 
- CodeAbsLabel getTargetLabel()
- {
-  return null;
- }
+	CodeAbsLabel getTargetLabel() {
+		return null;
+	}
 
- boolean isTargetInRange(int startIndex, int endIndex)
- {
-  return false;
- }
+	boolean isTargetInRange(int startIndex, int endIndex) {
+		return false;
+	}
 
- boolean isUncondBranch()
- {
-  return false;
- }
+	boolean isUncondBranch() {
+		return false;
+	}
 }

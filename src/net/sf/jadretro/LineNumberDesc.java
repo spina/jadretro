@@ -41,45 +41,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class LineNumberDesc extends ClassLabeledEntity
-{
+final class LineNumberDesc extends ClassLabeledEntity {
 
- private /* final */ CodeAbsLabel start;
+	private/* final */CodeAbsLabel start;
 
- private /* final */ int lineNumber;
+	private/* final */int lineNumber;
 
- LineNumberDesc(InputStream in)
-  throws IOException
- {
-  start = new CodeAbsLabel(in, null);
-  lineNumber = readUnsignedShort(in);
- }
+	LineNumberDesc(InputStream in) throws IOException {
+		start = new CodeAbsLabel(in, null);
+		lineNumber = readUnsignedShort(in);
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  start.mapLabelsPc(indices);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		start.mapLabelsPc(indices);
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  return start.isInRange(startIndex, endIndex);
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		return start.isInRange(startIndex, endIndex);
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  start.incLabelIndices(startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		start.incLabelIndices(startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  start.rebuildLabelsPc(offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		start.rebuildLabelsPc(offsets);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  start.writeTo(out);
-  writeShort(out, lineNumber);
- }
+	void writeTo(OutputStream out) throws IOException {
+		start.writeTo(out);
+		writeShort(out, lineNumber);
+	}
 }

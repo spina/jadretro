@@ -40,115 +40,98 @@ package net.sf.jadretro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Hashtable;
 
-final class OpCodeJump extends OpByteCode
-{
+final class OpCodeJump extends OpByteCode {
 
- private static final int GOTO = 0xa7;
+	private static final int GOTO = 0xa7;
 
- private static final int GOTO_W = 0xc8;
+	private static final int GOTO_W = 0xc8;
 
- private static final int IFEQ = 0x99;
+	private static final int IFEQ = 0x99;
 
- private static final int IFNONNULL = 0xc7;
+	private static final int IFNONNULL = 0xc7;
 
- private static final int IFNULL = 0xc6;
+	private static final int IFNULL = 0xc6;
 
- private static final int JSR = 0xa8;
+	private static final int JSR = 0xa8;
 
- private static final int JSR_W = 0xc9;
+	private static final int JSR_W = 0xc9;
 
- private /* final */ int op;
+	private/* final */int op;
 
- private /* final */ CodeAbsLabel targetLabel;
+	private/* final */CodeAbsLabel targetLabel;
 
- private OpCodeJump(int op, CodeAbsLabel targetLabel)
- {
-  this.op = op;
-  this.targetLabel = targetLabel;
- }
+	private OpCodeJump(int op, CodeAbsLabel targetLabel) {
+		this.op = op;
+		this.targetLabel = targetLabel;
+	}
 
- static OpCodeJump decode(int op, InputStream in, int curPc)
-  throws IOException
- {
-  return op == GOTO_W || op == JSR_W ?
-          new OpCodeJump(op, new CodeAbsLabel(in, true, curPc)) :
-          (op >= IFEQ && op <= JSR) || op == IFNULL || op == IFNONNULL ?
-          new OpCodeJump(op, new CodeAbsLabel(in, false, curPc)) : null;
- }
+	static OpCodeJump decode(int op, InputStream in, int curPc)
+			throws IOException {
+		return op == GOTO_W || op == JSR_W ? new OpCodeJump(op,
+				new CodeAbsLabel(in, true, curPc)) : (op >= IFEQ && op <= JSR)
+				|| op == IFNULL || op == IFNONNULL ? new OpCodeJump(op,
+				new CodeAbsLabel(in, false, curPc)) : null;
+	}
 
- static OpCodeJump makeIfnonnull(int targetIndex)
- {
-  CodeAbsLabel targetLabel = new CodeAbsLabel();
-  targetLabel.setNewIndex(targetIndex);
-  return new OpCodeJump(IFNONNULL, targetLabel);
- }
+	static OpCodeJump makeIfnonnull(int targetIndex) {
+		CodeAbsLabel targetLabel = new CodeAbsLabel();
+		targetLabel.setNewIndex(targetIndex);
+		return new OpCodeJump(IFNONNULL, targetLabel);
+	}
 
- static OpCodeJump makeJsrGoto(int targetIndex, boolean isJsr)
- {
-  CodeAbsLabel targetLabel = new CodeAbsLabel();
-  targetLabel.setNewIndex(targetIndex);
-  return new OpCodeJump(isJsr ? JSR : GOTO, targetLabel);
- }
+	static OpCodeJump makeJsrGoto(int targetIndex, boolean isJsr) {
+		CodeAbsLabel targetLabel = new CodeAbsLabel();
+		targetLabel.setNewIndex(targetIndex);
+		return new OpCodeJump(isJsr ? JSR : GOTO, targetLabel);
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  targetLabel.mapLabelsPc(indices);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		targetLabel.mapLabelsPc(indices);
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  targetLabel.incLabelIndices(startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		targetLabel.incLabelIndices(startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  targetLabel.rebuildLabelsPc(offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		targetLabel.rebuildLabelsPc(offsets);
+	}
 
- int getLength(int curPc)
- {
-  return op == GOTO_W || op == JSR_W ? 5 : 3;
- }
+	int getLength(int curPc) {
+		return op == GOTO_W || op == JSR_W ? 5 : 3;
+	}
 
- void writeRelTo(OutputStream out, int curPc)
-  throws IOException
- {
-  out.write(op);
-  targetLabel.writeRelTo(out, op == GOTO_W || op == JSR_W, curPc);
- }
+	void writeRelTo(OutputStream out, int curPc) throws IOException {
+		out.write(op);
+		targetLabel.writeRelTo(out, op == GOTO_W || op == JSR_W, curPc);
+	}
 
- boolean isEqualTo(OpByteCode other, int startIndex, int deltaIndex,
-   int endIndex2, int[] indexRef, int[] deltaVarRef, int argSlots,
-   Hashtable diffVarsSet)
- {
-  if (!(other instanceof OpCodeJump))
-   return false;
-  OpCodeJump opCodeJump = (OpCodeJump) other;
-  return op == opCodeJump.op && targetLabel.isEqualTo(opCodeJump.targetLabel,
-          startIndex, deltaIndex, endIndex2, indexRef);
- }
+	boolean isEqualTo(OpByteCode other, int startIndex, int deltaIndex,
+			int endIndex2, int[] indexRef, int[] deltaVarRef, int argSlots,
+			Hashtable diffVarsSet) {
+		if (!(other instanceof OpCodeJump))
+			return false;
+		OpCodeJump opCodeJump = (OpCodeJump) other;
+		return op == opCodeJump.op
+				&& targetLabel.isEqualTo(opCodeJump.targetLabel, startIndex,
+						deltaIndex, endIndex2, indexRef);
+	}
 
- boolean isJsrGoto(boolean isJsr)
- {
-  return isJsr ? op == JSR || op == JSR_W : op == GOTO || op == GOTO_W;
- }
+	boolean isJsrGoto(boolean isJsr) {
+		return isJsr ? op == JSR || op == JSR_W : op == GOTO || op == GOTO_W;
+	}
 
- CodeAbsLabel getTargetLabel()
- {
-  return targetLabel;
- }
+	CodeAbsLabel getTargetLabel() {
+		return targetLabel;
+	}
 
- boolean isTargetInRange(int startIndex, int endIndex)
- {
-  return targetLabel.isInRange(startIndex, endIndex);
- }
+	boolean isTargetInRange(int startIndex, int endIndex) {
+		return targetLabel.isInRange(startIndex, endIndex);
+	}
 
- boolean isUncondBranch()
- {
-  return op == GOTO || op == GOTO_W;
- }
+	boolean isUncondBranch() {
+		return op == GOTO || op == GOTO_W;
+	}
 }

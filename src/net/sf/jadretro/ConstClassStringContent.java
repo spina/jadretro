@@ -41,36 +41,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ConstClassStringContent extends ConstPoolContent
-{
+final class ConstClassStringContent extends ConstPoolContent {
 
- private /* final */ ConstantRef name;
+	private/* final */ConstantRef name;
 
- ConstClassStringContent(ConstantRef name)
- {
-  this.name = name;
- }
+	ConstClassStringContent(ConstantRef name) {
+		this.name = name;
+	}
 
- ConstClassStringContent(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  name = new ConstantRef(in, classFile, false);
- }
+	ConstClassStringContent(InputStream in, ClassFile classFile)
+			throws IOException {
+		name = new ConstantRef(in, classFile, false);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  name.writeTo(out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		name.writeTo(out);
+	}
 
- boolean isEqualTo(ConstPoolContent other)
- {
-  return other instanceof ConstClassStringContent &&
-          name.isEqualTo(((ConstClassStringContent) other).name);
- }
+	boolean isEqualTo(ConstPoolContent other) {
+		return other instanceof ConstClassStringContent
+				&& name.isEqualTo(((ConstClassStringContent) other).name);
+	}
 
- ConstantRef classOrName()
- {
-  return name;
- }
+	ConstantRef classOrName() {
+		return name;
+	}
 }

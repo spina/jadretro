@@ -41,36 +41,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class AttrRawContent extends AttrContent
-{
+final class AttrRawContent extends AttrContent {
 
- private /* final */ byte[] bytes;
+	private/* final */byte[] bytes;
 
- AttrRawContent()
- {
-  bytes = new byte[0];
- }
+	AttrRawContent() {
+		bytes = new byte[0];
+	}
 
- AttrRawContent(InputStream in, int len)
-  throws IOException
- {
-  bytes = new byte[len];
-  readFully(in, bytes);
- }
+	AttrRawContent(InputStream in, int len) throws IOException {
+		bytes = new byte[len];
+		readFully(in, bytes);
+	}
 
- static String exceptionsName()
- {
-  return "Exceptions";
- }
+	static String exceptionsName() {
+		return "Exceptions";
+	}
 
- static String syntheticName()
- {
-  return "Synthetic";
- }
+	static String syntheticName() {
+		return "Synthetic";
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  out.write(bytes);
- }
+	void writeTo(OutputStream out) throws IOException {
+		out.write(bytes);
+	}
 }

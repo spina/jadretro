@@ -43,112 +43,94 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UTFDataFormatException;
 
-final class ConstUtfContent extends ConstPoolContent
-{
+final class ConstUtfContent extends ConstPoolContent {
 
- private /* final */ String value;
+	private/* final */String value;
 
- ConstUtfContent(String value)
- {
-  this.value = value;
- }
+	ConstUtfContent(String value) {
+		this.value = value;
+	}
 
- ConstUtfContent(InputStream in)
-  throws IOException
- {
-  value = readUTF(in);
- }
+	ConstUtfContent(InputStream in) throws IOException {
+		value = readUTF(in);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeUTF(out, value);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeUTF(out, value);
+	}
 
- boolean isEqualTo(ConstPoolContent other)
- {
-  return other instanceof ConstUtfContent &&
-          value.equals(((ConstUtfContent) other).value);
- }
+	boolean isEqualTo(ConstPoolContent other) {
+		return other instanceof ConstUtfContent
+				&& value.equals(((ConstUtfContent) other).value);
+	}
 
- String utfValue()
- {
-  return value;
- }
+	String utfValue() {
+		return value;
+	}
 
- private static String readUTF(InputStream in)
-  throws IOException
- {
-  byte[] bytes = new byte[readUnsignedShort(in)];
-  readFully(in, bytes);
-  String str = decodeUTF(bytes);
-  if (str == null)
-   throw new UTFDataFormatException();
-  return str;
- }
+	private static String readUTF(InputStream in) throws IOException {
+		byte[] bytes = new byte[readUnsignedShort(in)];
+		readFully(in, bytes);
+		String str = decodeUTF(bytes);
+		if (str == null)
+			throw new UTFDataFormatException();
+		return str;
+	}
 
- private static String decodeUTF(byte[] bytes)
- {
-  int len = bytes.length;
-  StringBuffer sbuf = new StringBuffer(len);
-  for (int i = 0; i < len; i++)
-  {
-   int c1 = bytes[i];
-   if (c1 <= 0)
-   {
-    if (++i >= len)
-     return null;
-    int c2 = bytes[i];
-    if ((c2 & 0xc0) != 0x80)
-     return null;
-    if ((c1 & 0xe0) == 0xc0)
-     c1 = ((c1 & 0x1f) << 6) | (c2 & 0x3f);
-     else
-     {
-      if (++i >= len || (c1 & 0xf0) != 0xe0)
-       return null;
-      int c3 = bytes[i];
-      if ((c3 & 0xc0) != 0x80)
-       return null;
-      c1 = (c1 << 12) | ((c2 & 0x3f) << 6) | (c3 & 0x3f);
-     }
-   }
-   sbuf.append((char) c1);
-  }
-  return sbuf.toString();
- }
+	private static String decodeUTF(byte[] bytes) {
+		int len = bytes.length;
+		StringBuffer sbuf = new StringBuffer(len);
+		for (int i = 0; i < len; i++) {
+			int c1 = bytes[i];
+			if (c1 <= 0) {
+				if (++i >= len)
+					return null;
+				int c2 = bytes[i];
+				if ((c2 & 0xc0) != 0x80)
+					return null;
+				if ((c1 & 0xe0) == 0xc0) {
+					c1 = ((c1 & 0x1f) << 6) | (c2 & 0x3f);
+				} else {
+					if (++i >= len || (c1 & 0xf0) != 0xe0)
+						return null;
+					int c3 = bytes[i];
+					if ((c3 & 0xc0) != 0x80)
+						return null;
+					c1 = (c1 << 12) | ((c2 & 0x3f) << 6) | (c3 & 0x3f);
+				}
+			}
+			sbuf.append((char) c1);
+		}
+		return sbuf.toString();
+	}
 
- private static void writeUTF(OutputStream out, String str)
-  throws IOException
- {
-  int count = str.length();
-  ByteArrayOutputStream baos =
-   new ByteArrayOutputStream((count >> 1) + count + 16);
-  encodeUTF(baos, str);
-  int len = baos.size();
-  if (len > 0xffff)
-   throw new UTFDataFormatException();
-  writeShort(out, len);
-  baos.writeTo(out);
- }
+	private static void writeUTF(OutputStream out, String str)
+			throws IOException {
+		int count = str.length();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream((count >> 1)
+				+ count + 16);
+		encodeUTF(baos, str);
+		int len = baos.size();
+		if (len > 0xffff)
+			throw new UTFDataFormatException();
+		writeShort(out, len);
+		baos.writeTo(out);
+	}
 
- private static void encodeUTF(ByteArrayOutputStream baos, String str)
- {
-  int count = str.length();
-  for (int i = 0; i < count; i++)
-  {
-   int c1 = str.charAt(i);
-   if (c1 == 0 || c1 > 0x7f)
-   {
-    if (c1 > 0x7ff)
-    {
-     baos.write((c1 >> 12) | 0xe0);
-     baos.write(((c1 >> 6) & 0x3f) | 0x80);
-    }
-     else baos.write((c1 >> 6) | 0xc0);
-    c1 = (c1 & 0x3f) | 0x80;
-   }
-   baos.write(c1);
-  }
- }
+	private static void encodeUTF(ByteArrayOutputStream baos, String str) {
+		int count = str.length();
+		for (int i = 0; i < count; i++) {
+			int c1 = str.charAt(i);
+			if (c1 == 0 || c1 > 0x7f) {
+				if (c1 > 0x7ff) {
+					baos.write((c1 >> 12) | 0xe0);
+					baos.write(((c1 >> 6) & 0x3f) | 0x80);
+				} else {
+					baos.write((c1 >> 6) | 0xc0);
+				}
+				c1 = (c1 & 0x3f) | 0x80;
+			}
+			baos.write(c1);
+		}
+	}
 }

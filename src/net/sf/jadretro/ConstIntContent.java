@@ -41,31 +41,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ConstIntContent extends ConstPoolContent
-{
+final class ConstIntContent extends ConstPoolContent {
 
- private /* final */ int value;
+	private/* final */int value;
 
- ConstIntContent(int value)
- {
-  this.value = value;
- }
+	ConstIntContent(int value) {
+		this.value = value;
+	}
 
- ConstIntContent(InputStream in)
-  throws IOException
- {
-  value = readInt(in);
- }
+	ConstIntContent(InputStream in) throws IOException {
+		value = readInt(in);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeInt(out, value);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeInt(out, value);
+	}
 
- boolean isEqualTo(ConstPoolContent other)
- {
-  return other instanceof ConstIntContent &&
-          ((ConstIntContent) other).value == value;
- }
+	boolean isEqualTo(ConstPoolContent other) {
+		return other instanceof ConstIntContent
+				&& ((ConstIntContent) other).value == value;
+	}
 }

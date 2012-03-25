@@ -41,346 +41,300 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UTFDataFormatException;
-
 import java.util.Vector;
 
-final class ClassFile extends ClassEntity
-{
+final class ClassFile extends ClassEntity {
 
- private static final int MAGIC_VALUE = 0xcafebabe;
+	private static final int MAGIC_VALUE = 0xcafebabe;
 
- private static final int MAJOR_VER_BASE = 45;
+	private static final int MAJOR_VER_BASE = 45;
 
- private static final int MINOR_VER_MIN = 3;
+	private static final int MINOR_VER_MIN = 3;
 
- private int minorVer;
+	private int minorVer;
 
- private int majorVer;
+	private int majorVer;
 
- private /* final */ Vector constants;
+	private/* final */Vector constants;
 
- private /* final */ AccessFlags accessFlags;
+	private/* final */AccessFlags accessFlags;
 
- private /* final */ ConstantRef thisClass;
+	private/* final */ConstantRef thisClass;
 
- private /* final */ ConstantRef superClass;
+	private/* final */ConstantRef superClass;
 
- private /* final */ Vector interfaces;
+	private/* final */Vector interfaces;
 
- private /* final */ Vector fields;
+	private/* final */Vector fields;
 
- private /* final */ Vector methods;
+	private/* final */Vector methods;
 
- private /* final */ Vector attributes;
+	private/* final */Vector attributes;
 
- ClassFile(InputStream in)
-  throws IOException
- {
-  if (readInt(in) != MAGIC_VALUE)
-   throw new BadClassFileException();
-  minorVer = readUnsignedShort(in);
-  majorVer = readUnsignedShort(in);
-  if (majorVer < MAJOR_VER_BASE || getJavaVer() > 0x40 ||
-      (majorVer == MAJOR_VER_BASE && minorVer < MINOR_VER_MIN))
-   throw new BadClassFileException();
-  int constPoolSize = readUnsignedShort(in);
-  if (constPoolSize == 0)
-   throw new BadClassFileException();
-  constants = new Vector(constPoolSize);
-  constants.setSize(constPoolSize);
-  constants.setElementAt(ConstantPoolEntry.EMPTY_ENTRY, 0);
-  try
-  {
-   for (int i = 1; i < constPoolSize; i++)
-   {
-    ConstantPoolEntry entry = new ConstantPoolEntry(in, this);
-    constants.setElementAt(entry, i);
-    if (entry.isLongOrDouble())
-    {
-     if (++i == constPoolSize)
-      throw new BadClassFileException();
-     constants.setElementAt(ConstantPoolEntry.EMPTY_ENTRY, i);
-    }
-   }
-  }
-  catch (UTFDataFormatException e)
-  {
-   throw new BadClassFileException();
-  }
-  accessFlags = new AccessFlags(in);
-  thisClass = new ConstantRef(in, this, false);
-  superClass = new ConstantRef(in, this, true);
-  int interfacesCount = readUnsignedShort(in);
-  interfaces = new Vector(interfacesCount);
-  while (interfacesCount-- > 0)
-   interfaces.addElement(new ConstantRef(in, this, false));
-  fields = readFieldsOrMethods(in, this);
-  methods = readFieldsOrMethods(in, this);
-  attributes = readAttributes(in, this);
-  if (in.read() >= 0)
-   throw new BadClassFileException();
- }
+	ClassFile(InputStream in) throws IOException {
+		if (readInt(in) != MAGIC_VALUE)
+			throw new BadClassFileException();
+		minorVer = readUnsignedShort(in);
+		majorVer = readUnsignedShort(in);
+		if (majorVer < MAJOR_VER_BASE || getJavaVer() > 0x40
+				|| (majorVer == MAJOR_VER_BASE && minorVer < MINOR_VER_MIN))
+			throw new BadClassFileException();
+		int constPoolSize = readUnsignedShort(in);
+		if (constPoolSize == 0)
+			throw new BadClassFileException();
+		constants = new Vector(constPoolSize);
+		constants.setSize(constPoolSize);
+		constants.setElementAt(ConstantPoolEntry.EMPTY_ENTRY, 0);
+		try {
+			for (int i = 1; i < constPoolSize; i++) {
+				ConstantPoolEntry entry = new ConstantPoolEntry(in, this);
+				constants.setElementAt(entry, i);
+				if (entry.isLongOrDouble()) {
+					if (++i == constPoolSize)
+						throw new BadClassFileException();
+					constants.setElementAt(ConstantPoolEntry.EMPTY_ENTRY, i);
+				}
+			}
+		} catch (UTFDataFormatException e) {
+			throw new BadClassFileException();
+		}
+		accessFlags = new AccessFlags(in);
+		thisClass = new ConstantRef(in, this, false);
+		superClass = new ConstantRef(in, this, true);
+		int interfacesCount = readUnsignedShort(in);
+		interfaces = new Vector(interfacesCount);
+		while (interfacesCount-- > 0) {
+			interfaces.addElement(new ConstantRef(in, this, false));
+		}
+		fields = readFieldsOrMethods(in, this);
+		methods = readFieldsOrMethods(in, this);
+		attributes = readAttributes(in, this);
+		if (in.read() >= 0)
+			throw new BadClassFileException();
+	}
 
- private static Vector readFieldsOrMethods(InputStream in,
-   ClassFile classFile)
-  throws IOException
- {
-  int count = readUnsignedShort(in);
-  Vector entries = new Vector(count);
-  while (count-- > 0)
-   entries.addElement(new FieldMethodEntry(in, classFile));
-  return entries;
- }
+	private static Vector readFieldsOrMethods(InputStream in,
+			ClassFile classFile) throws IOException {
+		int count = readUnsignedShort(in);
+		Vector entries = new Vector(count);
+		while (count-- > 0) {
+			entries.addElement(new FieldMethodEntry(in, classFile));
+		}
+		return entries;
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeInt(out, MAGIC_VALUE);
-  writeShort(out, minorVer);
-  writeShort(out, majorVer);
-  int constPoolSize = constants.size();
-  writeCheckedUShort(out, constPoolSize);
-  try
-  {
-   for (int i = 1; i < constPoolSize; i++)
-   {
-    ConstantPoolEntry entry = (ConstantPoolEntry) constants.elementAt(i);
-    entry.writeTo(out);
-    if (entry.isLongOrDouble())
-     i++;
-   }
-  }
-  catch (UTFDataFormatException e)
-  {
-   throw new ClassOverflowException();
-  }
-  accessFlags.writeTo(out);
-  thisClass.writeTo(out);
-  superClass.writeTo(out);
-  writeToForArray(interfaces, out);
-  writeToForArray(fields, out);
-  writeToForArray(methods, out);
-  writeToForArray(attributes, out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeInt(out, MAGIC_VALUE);
+		writeShort(out, minorVer);
+		writeShort(out, majorVer);
+		int constPoolSize = constants.size();
+		writeCheckedUShort(out, constPoolSize);
+		try {
+			for (int i = 1; i < constPoolSize; i++) {
+				ConstantPoolEntry entry = (ConstantPoolEntry) constants
+						.elementAt(i);
+				entry.writeTo(out);
+				if (entry.isLongOrDouble()) {
+					i++;
+				}
+			}
+		} catch (UTFDataFormatException e) {
+			throw new ClassOverflowException();
+		}
+		accessFlags.writeTo(out);
+		thisClass.writeTo(out);
+		superClass.writeTo(out);
+		writeToForArray(interfaces, out);
+		writeToForArray(fields, out);
+		writeToForArray(methods, out);
+		writeToForArray(attributes, out);
+	}
 
- int getJavaVer()
- {
-  return (minorVer > 0 && majorVer > MAJOR_VER_BASE ? 2 : 1) +
-          majorVer - MAJOR_VER_BASE;
- }
+	int getJavaVer() {
+		return (minorVer > 0 && majorVer > MAJOR_VER_BASE ? 2 : 1) + majorVer
+				- MAJOR_VER_BASE;
+	}
 
- void setJavaVer(int version)
- {
-  if (version > 1)
-  {
-   majorVer = version + MAJOR_VER_BASE - 1;
-   minorVer = 0;
-  }
- }
+	void setJavaVer(int version) {
+		if (version > 1) {
+			majorVer = version + MAJOR_VER_BASE - 1;
+			minorVer = 0;
+		}
+	}
 
- String className()
-  throws BadClassFileException
- {
-  return thisClass.classOrName().utfValue();
- }
+	String className() throws BadClassFileException {
+		return thisClass.classOrName().utfValue();
+	}
 
- String getSuperClassName()
-  throws BadClassFileException
- {
-  return superClass.isZero() ? null : superClass.classOrName().utfValue();
- }
+	String getSuperClassName() throws BadClassFileException {
+		return superClass.isZero() ? null : superClass.classOrName().utfValue();
+	}
 
- int getMethodsCount()
- {
-  return methods.size();
- }
+	int getMethodsCount() {
+		return methods.size();
+	}
 
- FieldMethodEntry getMethodAt(int i)
- {
-  return (FieldMethodEntry) methods.elementAt(i);
- }
+	FieldMethodEntry getMethodAt(int i) {
+		return (FieldMethodEntry) methods.elementAt(i);
+	}
 
- void removeMethodAt(int i)
- {
-  methods.removeElementAt(i);
- }
+	void removeMethodAt(int i) {
+		methods.removeElementAt(i);
+	}
 
- int getFieldsCount()
- {
-  return fields.size();
- }
+	int getFieldsCount() {
+		return fields.size();
+	}
 
- FieldMethodEntry getFieldAt(int i)
- {
-  return (FieldMethodEntry) fields.elementAt(i);
- }
+	FieldMethodEntry getFieldAt(int i) {
+		return (FieldMethodEntry) fields.elementAt(i);
+	}
 
- int findField(String nameValue, String descriptorValue, boolean isStatic)
-  throws BadClassFileException
- {
-  int count = fields.size();
-  for (int i = 0; i < count; i++)
-  {
-   FieldMethodEntry field = (FieldMethodEntry) fields.elementAt(i);
-   if (field.accessFlags().isStatic() == isStatic &&
-       nameValue.equals(field.name().utfValue()) &&
-       descriptorValue.equals(field.descriptor().utfValue()))
-    return i;
-  }
-  return -1;
- }
+	int findField(String nameValue, String descriptorValue, boolean isStatic)
+			throws BadClassFileException {
+		int count = fields.size();
+		for (int i = 0; i < count; i++) {
+			FieldMethodEntry field = (FieldMethodEntry) fields.elementAt(i);
+			if (field.accessFlags().isStatic() == isStatic
+					&& nameValue.equals(field.name().utfValue())
+					&& descriptorValue.equals(field.descriptor().utfValue()))
+				return i;
+		}
+		return -1;
+	}
 
- void removeFieldAt(int i)
- {
-  fields.removeElementAt(i);
- }
+	void removeFieldAt(int i) {
+		fields.removeElementAt(i);
+	}
 
- void removeStaticAnonInnerClassInfo(String innerClassName)
-  throws BadClassFileException
- {
-  int count = attributes.size();
-  for (int i = 0; i < count; i++)
-  {
-   AttrContent content = ((AttributeEntry) attributes.elementAt(i)).content();
-   if (content instanceof AttrInnerClassContent)
-   {
-    if (((AttrInnerClassContent) content).removeStaticAnonInnerClass(
-        innerClassName, className()))
-     attributes.removeElementAt(i);
-    break;
-   }
-  }
- }
+	void removeStaticAnonInnerClassInfo(String innerClassName)
+			throws BadClassFileException {
+		int count = attributes.size();
+		for (int i = 0; i < count; i++) {
+			AttrContent content = ((AttributeEntry) attributes.elementAt(i))
+					.content();
+			if (content instanceof AttrInnerClassContent) {
+				if (((AttrInnerClassContent) content)
+						.removeStaticAnonInnerClass(innerClassName, className())) {
+					attributes.removeElementAt(i);
+				}
+				break;
+			}
+		}
+	}
 
- int getConstantPoolCount()
- {
-  return constants.size();
- }
+	int getConstantPoolCount() {
+		return constants.size();
+	}
 
- ConstantPoolEntry getConstantAt(int i)
- {
-  return (ConstantPoolEntry) constants.elementAt(i);
- }
+	ConstantPoolEntry getConstantAt(int i) {
+		return (ConstantPoolEntry) constants.elementAt(i);
+	}
 
- void changeClassConstAt(int i, String value)
- {
-  constants.setElementAt(
-   ConstantPoolEntry.makeClassString(addUtfConst(value), true), i);
- }
+	void changeClassConstAt(int i, String value) {
+		constants.setElementAt(
+				ConstantPoolEntry.makeClassString(addUtfConst(value), true), i);
+	}
 
- void changeNameAndTypeConstAt(int i, String descriptorValue)
-  throws BadClassFileException
- {
-  constants.setElementAt(ConstantPoolEntry.makeNameAndType(
-   ((ConstantPoolEntry) constants.elementAt(i)).content().classOrName(),
-   addUtfConst(descriptorValue)), i);
- }
+	void changeNameAndTypeConstAt(int i, String descriptorValue)
+			throws BadClassFileException {
+		constants.setElementAt(ConstantPoolEntry.makeNameAndType(
+				((ConstantPoolEntry) constants.elementAt(i)).content()
+						.classOrName(), addUtfConst(descriptorValue)), i);
+	}
 
- private ConstantRef addConstant(ConstantPoolEntry entry)
- {
-  for (int index = constants.size() - 1; index > 0; index--)
-   if (entry.isEqualTo((ConstantPoolEntry) constants.elementAt(index)))
-    return new ConstantRef(index, this);
-  constants.addElement(entry);
-  return new ConstantRef(constants.size() - 1, this);
- }
+	private ConstantRef addConstant(ConstantPoolEntry entry) {
+		for (int index = constants.size() - 1; index > 0; index--) {
+			if (entry.isEqualTo((ConstantPoolEntry) constants.elementAt(index)))
+				return new ConstantRef(index, this);
+		}
+		constants.addElement(entry);
+		return new ConstantRef(constants.size() - 1, this);
+	}
 
- ConstantRef addUtfConst(String value)
- {
-  return addConstant(ConstantPoolEntry.makeUtf(value));
- }
+	ConstantRef addUtfConst(String value) {
+		return addConstant(ConstantPoolEntry.makeUtf(value));
+	}
 
- ConstantRef addClassStringConst(String value, boolean isClass)
- {
-  return addConstant(ConstantPoolEntry.makeClassString(addUtfConst(value),
-          isClass));
- }
+	ConstantRef addClassStringConst(String value, boolean isClass) {
+		return addConstant(ConstantPoolEntry.makeClassString(
+				addUtfConst(value), isClass));
+	}
 
- private ConstantRef addFieldNormMethodConst(ConstantRef classConst,
-   ConstantRef name, ConstantRef descriptor, boolean isField)
- {
-  return addConstant(ConstantPoolEntry.makeFieldNormMethod(classConst,
-          addConstant(ConstantPoolEntry.makeNameAndType(name, descriptor)),
-          isField));
- }
+	private ConstantRef addFieldNormMethodConst(ConstantRef classConst,
+			ConstantRef name, ConstantRef descriptor, boolean isField) {
+		return addConstant(ConstantPoolEntry
+				.makeFieldNormMethod(classConst, addConstant(ConstantPoolEntry
+						.makeNameAndType(name, descriptor)), isField));
+	}
 
- ConstantRef addNormMethodConst(ConstantRef classConst, String nameValue,
-   String descriptorValue)
- {
-  ConstantRef name = addUtfConst(nameValue);
-  return addFieldNormMethodConst(classConst, name,
-          addUtfConst(descriptorValue), false);
- }
+	ConstantRef addNormMethodConst(ConstantRef classConst, String nameValue,
+			String descriptorValue) {
+		ConstantRef name = addUtfConst(nameValue);
+		return addFieldNormMethodConst(classConst, name,
+				addUtfConst(descriptorValue), false);
+	}
 
- ConstantRef addNormMethodConstFor(int methodIndex)
- {
-  FieldMethodEntry method = getMethodAt(methodIndex);
-  return addFieldNormMethodConst(thisClass, method.name(),
-          method.descriptor(), false);
- }
+	ConstantRef addNormMethodConstFor(int methodIndex) {
+		FieldMethodEntry method = getMethodAt(methodIndex);
+		return addFieldNormMethodConst(thisClass, method.name(),
+				method.descriptor(), false);
+	}
 
- AttributeEntry makeSyntheticAttribute()
- {
-  return new AttributeEntry(addUtfConst(AttrRawContent.syntheticName()),
-          new AttrRawContent());
- }
+	AttributeEntry makeSyntheticAttribute() {
+		return new AttributeEntry(addUtfConst(AttrRawContent.syntheticName()),
+				new AttrRawContent());
+	}
 
- ConstantRef addStaticField(String nameValue, String typeValue)
-  throws BadClassFileException
- {
-  ConstantRef name = null;
-  ConstantRef descriptor = null;
-  int i = fields.size();
-  while (i-- > 0)
-  {
-   FieldMethodEntry field = (FieldMethodEntry) fields.elementAt(i);
-   name = field.name();
-   descriptor = field.descriptor();
-   if (nameValue.equals(name.utfValue()))
-   {
-    if (field.accessFlags().isStatic() &&
-        typeValue.equals(descriptor.utfValue()))
-     break;
-    return null;
-   }
-  }
-  if (i < 0)
-  {
-   name = addUtfConst(nameValue);
-   descriptor = addUtfConst(typeValue);
-   FieldMethodEntry field =
-    new FieldMethodEntry(AccessFlags.makeStatic(), name, descriptor);
-   field.addAttribute(makeSyntheticAttribute());
-   fields.addElement(field);
-  }
-  return addFieldNormMethodConst(thisClass, name, descriptor, true);
- }
+	ConstantRef addStaticField(String nameValue, String typeValue)
+			throws BadClassFileException {
+		ConstantRef name = null;
+		ConstantRef descriptor = null;
+		int i = fields.size();
+		while (i-- > 0) {
+			FieldMethodEntry field = (FieldMethodEntry) fields.elementAt(i);
+			name = field.name();
+			descriptor = field.descriptor();
+			if (nameValue.equals(name.utfValue())) {
+				if (field.accessFlags().isStatic()
+						&& typeValue.equals(descriptor.utfValue()))
+					break;
+				return null;
+			}
+		}
+		if (i < 0) {
+			name = addUtfConst(nameValue);
+			descriptor = addUtfConst(typeValue);
+			FieldMethodEntry field = new FieldMethodEntry(
+					AccessFlags.makeStatic(), name, descriptor);
+			field.addAttribute(makeSyntheticAttribute());
+			fields.addElement(field);
+		}
+		return addFieldNormMethodConst(thisClass, name, descriptor, true);
+	}
 
- int addStaticMethodNoExc(String nameValue, String descriptorValue)
-  throws BadClassFileException
- {
-  String paramDescr =
-   descriptorValue.substring(0, descriptorValue.indexOf(')') + 1);
-  for (int methodIndex = getMethodsCount() - 1;
-       methodIndex >= 0; methodIndex--)
-  {
-   FieldMethodEntry method = getMethodAt(methodIndex);
-   if (nameValue.equals(method.name().utfValue()))
-   {
-    String methodDescrValue = method.descriptor().utfValue();
-    if (methodDescrValue.startsWith(paramDescr))
-     return method.accessFlags().isStatic() &&
-             !method.hasExceptionsSynthetic(true) &&
-             descriptorValue.equals(methodDescrValue) ? methodIndex : -1;
-   }
-  }
-  FieldMethodEntry method =
-   new FieldMethodEntry(AccessFlags.makeStatic(), addUtfConst(nameValue),
-   addUtfConst(descriptorValue));
-  method.addAttribute(new AttributeEntry(
-   addUtfConst(AttrCodeContent.nameValue()), new AttrCodeContent()));
-  method.addAttribute(makeSyntheticAttribute());
-  methods.addElement(method);
-  return getMethodsCount() - 1;
- }
+	int addStaticMethodNoExc(String nameValue, String descriptorValue)
+			throws BadClassFileException {
+		String paramDescr = descriptorValue.substring(0,
+				descriptorValue.indexOf(')') + 1);
+		for (int methodIndex = getMethodsCount() - 1; methodIndex >= 0; methodIndex--) {
+			FieldMethodEntry method = getMethodAt(methodIndex);
+			if (nameValue.equals(method.name().utfValue())) {
+				String methodDescrValue = method.descriptor().utfValue();
+				if (methodDescrValue.startsWith(paramDescr))
+					return method.accessFlags().isStatic()
+							&& !method.hasExceptionsSynthetic(true)
+							&& descriptorValue.equals(methodDescrValue) ? methodIndex
+							: -1;
+			}
+		}
+		FieldMethodEntry method = new FieldMethodEntry(
+				AccessFlags.makeStatic(), addUtfConst(nameValue),
+				addUtfConst(descriptorValue));
+		method.addAttribute(new AttributeEntry(addUtfConst(AttrCodeContent
+				.nameValue()), new AttrCodeContent()));
+		method.addAttribute(makeSyntheticAttribute());
+		methods.addElement(method);
+		return getMethodsCount() - 1;
+	}
 }

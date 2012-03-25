@@ -41,112 +41,91 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Vector;
 
-abstract class ClassEntity
-{
+abstract class ClassEntity {
 
- static Vector readAttributes(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  int count = readUnsignedShort(in);
-  Vector attributes = new Vector(count);
-  while (count-- > 0)
-   attributes.addElement(new AttributeEntry(in, classFile));
-  return attributes;
- }
+	static Vector readAttributes(InputStream in, ClassFile classFile)
+			throws IOException {
+		int count = readUnsignedShort(in);
+		Vector attributes = new Vector(count);
+		while (count-- > 0) {
+			attributes.addElement(new AttributeEntry(in, classFile));
+		}
+		return attributes;
+	}
 
- static void readFully(InputStream in, byte[] bytes)
-  throws IOException
- {
-  int ofs = 0;
-  int len = bytes.length;
-  while (ofs < len)
-  {
-   int res = in.read(bytes, ofs, len - ofs);
-   if (res < 0)
-    throw new EOFException();
-   ofs += res;
-  }
- }
+	static void readFully(InputStream in, byte[] bytes) throws IOException {
+		int ofs = 0;
+		int len = bytes.length;
+		while (ofs < len) {
+			int res = in.read(bytes, ofs, len - ofs);
+			if (res < 0)
+				throw new EOFException();
+			ofs += res;
+		}
+	}
 
- static byte readByte(InputStream in)
-  throws IOException
- {
-  return ((byte) readUnsignedByte(in));
- }
+	static byte readByte(InputStream in) throws IOException {
+		return ((byte) readUnsignedByte(in));
+	}
 
- static int readUnsignedByte(InputStream in)
-  throws IOException
- {
-  int c1 = in.read();
-  if (c1 < 0)
-   throw new EOFException();
-  return c1;
- }
+	static int readUnsignedByte(InputStream in) throws IOException {
+		int c1 = in.read();
+		if (c1 < 0)
+			throw new EOFException();
+		return c1;
+	}
 
- static short readShort(InputStream in)
-  throws IOException
- {
-  return ((short) readUnsignedShort(in));
- }
+	static short readShort(InputStream in) throws IOException {
+		return ((short) readUnsignedShort(in));
+	}
 
- static int readUnsignedShort(InputStream in)
-  throws IOException
- {
-  int c1 = in.read();
-  int c2 = in.read();
-  if (c2 < 0)
-   throw new EOFException();
-  return (c1 << 8) | c2;
- }
+	static int readUnsignedShort(InputStream in) throws IOException {
+		int c1 = in.read();
+		int c2 = in.read();
+		if (c2 < 0)
+			throw new EOFException();
+		return (c1 << 8) | c2;
+	}
 
- static int readInt(InputStream in)
-  throws IOException
- {
-  int c1 = in.read();
-  int c2 = in.read();
-  int c3 = in.read();
-  int c4 = in.read();
-  if (c4 < 0)
-   throw new EOFException();
-  return (((((c1 << 8) | c2) << 8) | c3) << 8) | c4;
- }
+	static int readInt(InputStream in) throws IOException {
+		int c1 = in.read();
+		int c2 = in.read();
+		int c3 = in.read();
+		int c4 = in.read();
+		if (c4 < 0)
+			throw new EOFException();
+		return (((((c1 << 8) | c2) << 8) | c3) << 8) | c4;
+	}
 
- abstract void writeTo(OutputStream out)
-  throws IOException;
+	abstract void writeTo(OutputStream out) throws IOException;
 
- static void writeToForArray(Vector entries, OutputStream out)
-  throws IOException
- {
-  int count = entries.size();
-  writeCheckedUShort(out, count);
-  for (int i = 0; i < count; i++)
-   ((ClassEntity) entries.elementAt(i)).writeTo(out);
- }
+	static void writeToForArray(Vector entries, OutputStream out)
+			throws IOException {
+		int count = entries.size();
+		writeCheckedUShort(out, count);
+		for (int i = 0; i < count; i++) {
+			((ClassEntity) entries.elementAt(i)).writeTo(out);
+		}
+	}
 
- static void writeCheckedUShort(OutputStream out, int value)
-  throws IOException
- {
-  if ((value & ~0xffff) != 0)
-   throw new ClassOverflowException();
-  writeShort(out, value);
- }
+	static void writeCheckedUShort(OutputStream out, int value)
+			throws IOException {
+		if ((value & ~0xffff) != 0)
+			throw new ClassOverflowException();
+		writeShort(out, value);
+	}
 
- static void writeShort(OutputStream out, int value)
-  throws IOException
- {
-  out.write(value >> 8);
-  out.write(value);
- }
+	static void writeShort(OutputStream out, int value) throws IOException {
+		out.write(value >> 8);
+		out.write(value);
+	}
 
- static void writeInt(OutputStream out, int value)
-  throws IOException
- {
-  out.write(value >> 24);
-  out.write(value >> 16);
-  out.write(value >> 8);
-  out.write(value);
- }
+	static void writeInt(OutputStream out, int value) throws IOException {
+		out.write(value >> 24);
+		out.write(value >> 16);
+		out.write(value >> 8);
+		out.write(value);
+	}
 }

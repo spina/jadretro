@@ -41,33 +41,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ConstLongContent extends ConstPoolContent
-{
+final class ConstLongContent extends ConstPoolContent {
 
- private /* final */ int highValue;
+	private/* final */int highValue;
 
- private /* final */ int lowValue;
+	private/* final */int lowValue;
 
- ConstLongContent(InputStream in)
-  throws IOException
- {
-  highValue = readInt(in);
-  lowValue = readInt(in);
- }
+	ConstLongContent(InputStream in) throws IOException {
+		highValue = readInt(in);
+		lowValue = readInt(in);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeInt(out, highValue);
-  writeInt(out, lowValue);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeInt(out, highValue);
+		writeInt(out, lowValue);
+	}
 
- boolean isEqualTo(ConstPoolContent other)
- {
-  if (!(other instanceof ConstLongContent))
-   return false;
-  ConstLongContent otherContent = (ConstLongContent) other;
-  return otherContent.highValue == highValue &&
-          otherContent.lowValue == lowValue;
- }
+	boolean isEqualTo(ConstPoolContent other) {
+		if (!(other instanceof ConstLongContent))
+			return false;
+		ConstLongContent otherContent = (ConstLongContent) other;
+		return otherContent.highValue == highValue
+				&& otherContent.lowValue == lowValue;
+	}
 }

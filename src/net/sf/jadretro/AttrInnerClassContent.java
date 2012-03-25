@@ -40,51 +40,45 @@ package net.sf.jadretro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Vector;
 
-final class AttrInnerClassContent extends AttrContent
-{
+final class AttrInnerClassContent extends AttrContent {
 
- private /* final */ Vector innerClasses;
+	private/* final */Vector innerClasses;
 
- AttrInnerClassContent(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  int count = readUnsignedShort(in);
-  innerClasses = new Vector(count);
-  while (count-- > 0)
-   innerClasses.addElement(new InnerClassDesc(in, classFile));
- }
+	AttrInnerClassContent(InputStream in, ClassFile classFile)
+			throws IOException {
+		int count = readUnsignedShort(in);
+		innerClasses = new Vector(count);
+		while (count-- > 0) {
+			innerClasses.addElement(new InnerClassDesc(in, classFile));
+		}
+	}
 
- static String nameValue()
- {
-  return "InnerClasses";
- }
+	static String nameValue() {
+		return "InnerClasses";
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeToForArray(innerClasses, out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeToForArray(innerClasses, out);
+	}
 
- boolean removeStaticAnonInnerClass(String innerClassName,
-   String outerClassName)
-  throws BadClassFileException
- {
-  for (int i = innerClasses.size() - 1; i >= 0; i--)
-  {
-   InnerClassDesc innerDesc = (InnerClassDesc) innerClasses.elementAt(i);
-   if (innerDesc.isAnonymousName() && innerDesc.accessFlags().isStatic() &&
-       innerClassName.equals(innerDesc.getClassNameValue(false)) &&
-       outerClassName.equals(innerDesc.getClassNameValue(true)))
-   {
-    innerClasses.removeElementAt(i);
-    if (innerClasses.size() != 0)
-     break;
-    return true;
-   }
-  }
-  return false;
- }
+	boolean removeStaticAnonInnerClass(String innerClassName,
+			String outerClassName) throws BadClassFileException {
+		for (int i = innerClasses.size() - 1; i >= 0; i--) {
+			InnerClassDesc innerDesc = (InnerClassDesc) innerClasses
+					.elementAt(i);
+			if (innerDesc.isAnonymousName()
+					&& innerDesc.accessFlags().isStatic()
+					&& innerClassName
+							.equals(innerDesc.getClassNameValue(false))
+					&& outerClassName.equals(innerDesc.getClassNameValue(true))) {
+				innerClasses.removeElementAt(i);
+				if (innerClasses.size() != 0)
+					break;
+				return true;
+			}
+		}
+		return false;
+	}
 }

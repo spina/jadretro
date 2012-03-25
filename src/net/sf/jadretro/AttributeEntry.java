@@ -44,97 +44,78 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class AttributeEntry extends ClassLabeledEntity
-{
+final class AttributeEntry extends ClassLabeledEntity {
 
- private /* final */ ConstantRef name;
+	private/* final */ConstantRef name;
 
- private /* final */ AttrContent content;
+	private/* final */AttrContent content;
 
- AttributeEntry(ConstantRef name, AttrContent content)
- {
-  this.name = name;
-  this.content = content;
- }
+	AttributeEntry(ConstantRef name, AttrContent content) {
+		this.name = name;
+		this.content = content;
+	}
 
- AttributeEntry(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  name = new ConstantRef(in, classFile, false);
-  int len = readInt(in);
-  if (len < 0)
-   throw new BadClassFileException();
-  byte[] bytes = new byte[len];
-  readFully(in, bytes);
-  ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-  try
-  {
-   content = decodeContent(bais, len, name, classFile);
-  }
-  catch (EOFException e)
-  {
-   throw new BadClassFileException();
-  }
-  if (bais.read() >= 0)
-   throw new BadClassFileException();
- }
+	AttributeEntry(InputStream in, ClassFile classFile) throws IOException {
+		name = new ConstantRef(in, classFile, false);
+		int len = readInt(in);
+		if (len < 0)
+			throw new BadClassFileException();
+		byte[] bytes = new byte[len];
+		readFully(in, bytes);
+		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+		try {
+			content = decodeContent(bais, len, name, classFile);
+		} catch (EOFException e) {
+			throw new BadClassFileException();
+		}
+		if (bais.read() >= 0)
+			throw new BadClassFileException();
+	}
 
- private static AttrContent decodeContent(InputStream in, int len,
-   ConstantRef name, ClassFile classFile)
-  throws IOException
- {
-  String nameValue = name.utfValue();
-  if (AttrCodeContent.nameValue().equals(nameValue))
-   return new AttrCodeContent(in, classFile);
-  if (AttrLineNumsContent.nameValue().equals(nameValue))
-   return new AttrLineNumsContent(in);
-  if (AttrLocalVarsContent.nameValue().equals(nameValue) ||
-      "LocalVariableTypeTable".equals(nameValue))
-   return new AttrLocalVarsContent(in, classFile);
-  if (AttrInnerClassContent.nameValue().equals(nameValue))
-   return new AttrInnerClassContent(in, classFile);
-  return new AttrRawContent(in, len);
- }
+	private static AttrContent decodeContent(InputStream in, int len,
+			ConstantRef name, ClassFile classFile) throws IOException {
+		String nameValue = name.utfValue();
+		if (AttrCodeContent.nameValue().equals(nameValue))
+			return new AttrCodeContent(in, classFile);
+		if (AttrLineNumsContent.nameValue().equals(nameValue))
+			return new AttrLineNumsContent(in);
+		if (AttrLocalVarsContent.nameValue().equals(nameValue)
+				|| "LocalVariableTypeTable".equals(nameValue))
+			return new AttrLocalVarsContent(in, classFile);
+		if (AttrInnerClassContent.nameValue().equals(nameValue))
+			return new AttrInnerClassContent(in, classFile);
+		return new AttrRawContent(in, len);
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  content.mapLabelsPc(indices);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		content.mapLabelsPc(indices);
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  return content.removeLabelsInRange(startIndex, endIndex);
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		return content.removeLabelsInRange(startIndex, endIndex);
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  content.incLabelIndices(startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		content.incLabelIndices(startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  content.rebuildLabelsPc(offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		content.rebuildLabelsPc(offsets);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  name.writeTo(out);
-  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-  content.writeTo(baos);
-  writeInt(out, baos.size());
-  baos.writeTo(out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		name.writeTo(out);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		content.writeTo(baos);
+		writeInt(out, baos.size());
+		baos.writeTo(out);
+	}
 
- String getNameValue()
-  throws BadClassFileException
- {
-  return name.utfValue();
- }
+	String getNameValue() throws BadClassFileException {
+		return name.utfValue();
+	}
 
- AttrContent content()
- {
-  return content;
- }
+	AttrContent content() {
+		return content;
+	}
 }

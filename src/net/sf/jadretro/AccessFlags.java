@@ -41,71 +41,59 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class AccessFlags extends ClassEntity
-{
+final class AccessFlags extends ClassEntity {
 
- private static final int ACC_FINAL = 0x10;
+	private static final int ACC_FINAL = 0x10;
 
- private static final int ACC_STATIC = 0x8;
+	private static final int ACC_STATIC = 0x8;
 
- private static final int ACC_SYNTHETIC = 0x1000;
+	private static final int ACC_SYNTHETIC = 0x1000;
 
- private static final int ACC_TRANSIENT = 0x80;
+	private static final int ACC_TRANSIENT = 0x80;
 
- private static final int ACC_VOLATILE = 0x40;
+	private static final int ACC_VOLATILE = 0x40;
 
- private int flags;
+	private int flags;
 
- private AccessFlags(int flags)
- {
-  this.flags = flags;
- }
+	private AccessFlags(int flags) {
+		this.flags = flags;
+	}
 
- AccessFlags(InputStream in)
-  throws IOException
- {
-  flags = readUnsignedShort(in);
- }
+	AccessFlags(InputStream in) throws IOException {
+		flags = readUnsignedShort(in);
+	}
 
- static AccessFlags makeStatic()
- {
-  return new AccessFlags(ACC_STATIC);
- }
+	static AccessFlags makeStatic() {
+		return new AccessFlags(ACC_STATIC);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeShort(out, flags);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeShort(out, flags);
+	}
 
- boolean isFinal()
- {
-  return (flags & ACC_FINAL) != 0;
- }
+	boolean isFinal() {
+		return (flags & ACC_FINAL) != 0;
+	}
 
- boolean isStatic()
- {
-  return (flags & ACC_STATIC) != 0;
- }
+	boolean isStatic() {
+		return (flags & ACC_STATIC) != 0;
+	}
 
- boolean isSynthetic()
- {
-  return (flags & ACC_SYNTHETIC) != 0;
- }
+	boolean isSynthetic() {
+		return (flags & ACC_SYNTHETIC) != 0;
+	}
 
- boolean clearTransient()
- {
-  if ((flags & ACC_TRANSIENT) == 0)
-   return false;
-  flags &= ~ACC_TRANSIENT;
-  return true;
- }
+	boolean clearTransient() {
+		if ((flags & ACC_TRANSIENT) == 0)
+			return false;
+		flags &= ~ACC_TRANSIENT;
+		return true;
+	}
 
- boolean clearVolatile()
- {
-  if ((flags & ACC_VOLATILE) == 0)
-   return false;
-  flags &= ~ACC_VOLATILE;
-  return true;
- }
+	boolean clearVolatile() {
+		if ((flags & ACC_VOLATILE) == 0)
+			return false;
+		flags &= ~ACC_VOLATILE;
+		return true;
+	}
 }

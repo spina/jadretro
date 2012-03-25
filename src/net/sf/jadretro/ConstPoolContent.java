@@ -37,26 +37,19 @@
 
 package net.sf.jadretro;
 
-abstract class ConstPoolContent extends ClassEntity
-{
+abstract class ConstPoolContent extends ClassEntity {
 
- abstract boolean isEqualTo(ConstPoolContent other);
+	abstract boolean isEqualTo(ConstPoolContent other);
 
- ConstantRef classOrName()
-  throws BadClassFileException
- {
-  throw new BadClassFileException();
- }
+	ConstantRef classOrName() throws BadClassFileException {
+		throw new BadClassFileException();
+	}
 
- ConstantRef descriptor()
-  throws BadClassFileException
- {
-  throw new BadClassFileException();
- }
+	ConstantRef descriptor() throws BadClassFileException {
+		throw new BadClassFileException();
+	}
 
- String utfValue()
-  throws BadClassFileException
- {
-  throw new BadClassFileException();
- }
+	String utfValue() throws BadClassFileException {
+		throw new BadClassFileException();
+	}
 }

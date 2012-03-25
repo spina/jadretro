@@ -40,52 +40,41 @@ package net.sf.jadretro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Vector;
 
-final class AttrLineNumsContent extends AttrContent
-{
+final class AttrLineNumsContent extends AttrContent {
 
- private /* final */ Vector lineNumbers;
+	private/* final */Vector lineNumbers;
 
- AttrLineNumsContent(InputStream in)
-  throws IOException
- {
-  int count = readUnsignedShort(in);
-  lineNumbers = new Vector(count);
-  while (count-- > 0)
-   lineNumbers.addElement(new LineNumberDesc(in));
- }
+	AttrLineNumsContent(InputStream in) throws IOException {
+		int count = readUnsignedShort(in);
+		lineNumbers = new Vector(count);
+		while (count-- > 0) {
+			lineNumbers.addElement(new LineNumberDesc(in));
+		}
+	}
 
- static String nameValue()
- {
-  return "LineNumberTable";
- }
+	static String nameValue() {
+		return "LineNumberTable";
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  mapLabelsPcForArray(lineNumbers, indices);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		mapLabelsPcForArray(lineNumbers, indices);
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  return removeLabelsInRangeForArray(lineNumbers, startIndex, endIndex);
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		return removeLabelsInRangeForArray(lineNumbers, startIndex, endIndex);
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  incLabelIndicesForArray(lineNumbers, startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		incLabelIndicesForArray(lineNumbers, startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  rebuildLabelsPcForArray(lineNumbers, offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		rebuildLabelsPcForArray(lineNumbers, offsets);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeToForArray(lineNumbers, out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeToForArray(lineNumbers, out);
+	}
 }

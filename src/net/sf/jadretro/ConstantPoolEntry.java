@@ -41,123 +41,106 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ConstantPoolEntry extends ClassEntity
-{
+final class ConstantPoolEntry extends ClassEntity {
 
- static final int UTF8_TAG = 1;
+	static final int UTF8_TAG = 1;
 
- static final int INTEGER_TAG = 3;
+	static final int INTEGER_TAG = 3;
 
- static final int FLOAT_TAG = 4;
+	static final int FLOAT_TAG = 4;
 
- static final int LONG_TAG = 5;
+	static final int LONG_TAG = 5;
 
- static final int DOUBLE_TAG = 6;
+	static final int DOUBLE_TAG = 6;
 
- static final int CLASS_TAG = 7;
+	static final int CLASS_TAG = 7;
 
- static final int STRING_TAG = 8;
+	static final int STRING_TAG = 8;
 
- static final int FIELDREF_TAG = 9;
+	static final int FIELDREF_TAG = 9;
 
- static final int METHODREF_TAG = 10;
+	static final int METHODREF_TAG = 10;
 
- static final int IFACEMETHOD_TAG = 11;
+	static final int IFACEMETHOD_TAG = 11;
 
- static final int NAMETYPE_TAG = 12;
+	static final int NAMETYPE_TAG = 12;
 
- static final ConstantPoolEntry EMPTY_ENTRY =
-  new ConstantPoolEntry(0, new ConstIntContent(0));
+	static final ConstantPoolEntry EMPTY_ENTRY = new ConstantPoolEntry(0,
+			new ConstIntContent(0));
 
- private /* final */ int tag;
+	private/* final */int tag;
 
- private /* final */ ConstPoolContent content;
+	private/* final */ConstPoolContent content;
 
- private ConstantPoolEntry(int tag, ConstPoolContent content)
- {
-  this.tag = tag;
-  this.content = content;
- }
+	private ConstantPoolEntry(int tag, ConstPoolContent content) {
+		this.tag = tag;
+		this.content = content;
+	}
 
- ConstantPoolEntry(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  tag = readUnsignedByte(in);
-  content = decodeContent(in, tag, classFile);
- }
+	ConstantPoolEntry(InputStream in, ClassFile classFile) throws IOException {
+		tag = readUnsignedByte(in);
+		content = decodeContent(in, tag, classFile);
+	}
 
- private static ConstPoolContent decodeContent(InputStream in, int tag,
-   ClassFile classFile)
-  throws IOException
- {
-  if (tag == CLASS_TAG || tag == STRING_TAG)
-   return new ConstClassStringContent(in, classFile);
-  if (tag == FIELDREF_TAG || tag == METHODREF_TAG || tag == IFACEMETHOD_TAG ||
-      tag == NAMETYPE_TAG)
-   return new ConstFieldMethodNameType(in, classFile);
-  if (tag == INTEGER_TAG || tag == FLOAT_TAG)
-   return new ConstIntContent(in);
-  if (tag == LONG_TAG || tag == DOUBLE_TAG)
-   return new ConstLongContent(in);
-  if (tag == UTF8_TAG)
-   return new ConstUtfContent(in);
-  throw new BadClassFileException();
- }
+	private static ConstPoolContent decodeContent(InputStream in, int tag,
+			ClassFile classFile) throws IOException {
+		if (tag == CLASS_TAG || tag == STRING_TAG)
+			return new ConstClassStringContent(in, classFile);
+		if (tag == FIELDREF_TAG || tag == METHODREF_TAG
+				|| tag == IFACEMETHOD_TAG || tag == NAMETYPE_TAG)
+			return new ConstFieldMethodNameType(in, classFile);
+		if (tag == INTEGER_TAG || tag == FLOAT_TAG)
+			return new ConstIntContent(in);
+		if (tag == LONG_TAG || tag == DOUBLE_TAG)
+			return new ConstLongContent(in);
+		if (tag == UTF8_TAG)
+			return new ConstUtfContent(in);
+		throw new BadClassFileException();
+	}
 
- static ConstantPoolEntry makeClassString(ConstantRef name, boolean isClass)
- {
-  return new ConstantPoolEntry(isClass ? CLASS_TAG : STRING_TAG,
-          new ConstClassStringContent(name));
- }
+	static ConstantPoolEntry makeClassString(ConstantRef name, boolean isClass) {
+		return new ConstantPoolEntry(isClass ? CLASS_TAG : STRING_TAG,
+				new ConstClassStringContent(name));
+	}
 
- static ConstantPoolEntry makeFieldNormMethod(ConstantRef classConst,
-   ConstantRef descriptor, boolean isField)
- {
-  return new ConstantPoolEntry(isField ? FIELDREF_TAG : METHODREF_TAG,
-          new ConstFieldMethodNameType(classConst, descriptor));
- }
+	static ConstantPoolEntry makeFieldNormMethod(ConstantRef classConst,
+			ConstantRef descriptor, boolean isField) {
+		return new ConstantPoolEntry(isField ? FIELDREF_TAG : METHODREF_TAG,
+				new ConstFieldMethodNameType(classConst, descriptor));
+	}
 
- static ConstantPoolEntry makeNameAndType(ConstantRef name,
-   ConstantRef descriptor)
- {
-  return new ConstantPoolEntry(NAMETYPE_TAG,
-          new ConstFieldMethodNameType(name, descriptor));
- }
+	static ConstantPoolEntry makeNameAndType(ConstantRef name,
+			ConstantRef descriptor) {
+		return new ConstantPoolEntry(NAMETYPE_TAG,
+				new ConstFieldMethodNameType(name, descriptor));
+	}
 
- static ConstantPoolEntry makeUtf(String value)
- {
-  return new ConstantPoolEntry(UTF8_TAG, new ConstUtfContent(value));
- }
+	static ConstantPoolEntry makeUtf(String value) {
+		return new ConstantPoolEntry(UTF8_TAG, new ConstUtfContent(value));
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  out.write(tag);
-  content.writeTo(out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		out.write(tag);
+		content.writeTo(out);
+	}
 
- boolean isEqualTo(ConstantPoolEntry other)
- {
-  return other.tag == tag && content.isEqualTo(other.content);
- }
+	boolean isEqualTo(ConstantPoolEntry other) {
+		return other.tag == tag && content.isEqualTo(other.content);
+	}
 
- boolean isClassConst()
- {
-  return tag == CLASS_TAG;
- }
+	boolean isClassConst() {
+		return tag == CLASS_TAG;
+	}
 
- boolean isLongOrDouble()
- {
-  return tag == LONG_TAG || tag == DOUBLE_TAG;
- }
+	boolean isLongOrDouble() {
+		return tag == LONG_TAG || tag == DOUBLE_TAG;
+	}
 
- boolean isNameAndType()
- {
-  return tag == NAMETYPE_TAG;
- }
+	boolean isNameAndType() {
+		return tag == NAMETYPE_TAG;
+	}
 
- ConstPoolContent content()
- {
-  return content;
- }
+	ConstPoolContent content() {
+		return content;
+	}
 }

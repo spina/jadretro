@@ -41,98 +41,77 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class ConstantRef extends ClassEntity
-{
+final class ConstantRef extends ClassEntity {
 
- private /* final */ int index;
+	private/* final */int index;
 
- private /* final */ ClassFile classFile;
+	private/* final */ClassFile classFile;
 
- ConstantRef(int index, ClassFile classFile)
- {
-  this.index = index;
-  this.classFile = classFile;
- }
+	ConstantRef(int index, ClassFile classFile) {
+		this.index = index;
+		this.classFile = classFile;
+	}
 
- ConstantRef(InputStream in, ClassFile classFile, boolean isZeroAllowed)
-  throws IOException
- {
-  this.classFile = classFile;
-  index = readUnsignedShort(in);
-  if ((!isZeroAllowed && index == 0) ||
-      classFile.getConstantPoolCount() <= index)
-   throw new BadClassFileException();
- }
+	ConstantRef(InputStream in, ClassFile classFile, boolean isZeroAllowed)
+			throws IOException {
+		this.classFile = classFile;
+		index = readUnsignedShort(in);
+		if ((!isZeroAllowed && index == 0)
+				|| classFile.getConstantPoolCount() <= index)
+			throw new BadClassFileException();
+	}
 
- static ConstantRef readAsByteFrom(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  int index = readUnsignedByte(in);
-  if (index == 0 || classFile.getConstantPoolCount() <= index)
-   throw new BadClassFileException();
-  return new ConstantRef(index, classFile);
- }
+	static ConstantRef readAsByteFrom(InputStream in, ClassFile classFile)
+			throws IOException {
+		int index = readUnsignedByte(in);
+		if (index == 0 || classFile.getConstantPoolCount() <= index)
+			throw new BadClassFileException();
+		return new ConstantRef(index, classFile);
+	}
 
- boolean isWide()
- {
-  return (index & ~0xff) != 0;
- }
+	boolean isWide() {
+		return (index & ~0xff) != 0;
+	}
 
- void writeAsByteTo(OutputStream out)
-  throws IOException
- {
-  if (isWide())
-   throw new ClassOverflowException();
-  out.write(index);
- }
+	void writeAsByteTo(OutputStream out) throws IOException {
+		if (isWide())
+			throw new ClassOverflowException();
+		out.write(index);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeShort(out, index);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeShort(out, index);
+	}
 
- private ConstantPoolEntry getConstantEntry()
- {
-  return classFile.getConstantAt(index);
- }
+	private ConstantPoolEntry getConstantEntry() {
+		return classFile.getConstantAt(index);
+	}
 
- boolean isClassConst()
- {
-  return getConstantEntry().isClassConst();
- }
+	boolean isClassConst() {
+		return getConstantEntry().isClassConst();
+	}
 
- ConstantRef classOrName()
-  throws BadClassFileException
- {
-  return getConstantEntry().content().classOrName();
- }
+	ConstantRef classOrName() throws BadClassFileException {
+		return getConstantEntry().content().classOrName();
+	}
 
- ConstantRef descriptor()
-  throws BadClassFileException
- {
-  return getConstantEntry().content().descriptor();
- }
+	ConstantRef descriptor() throws BadClassFileException {
+		return getConstantEntry().content().descriptor();
+	}
 
- String utfValue()
-  throws BadClassFileException
- {
-  return getConstantEntry().content().utfValue();
- }
+	String utfValue() throws BadClassFileException {
+		return getConstantEntry().content().utfValue();
+	}
 
- String getEntityClassNameValue()
-  throws BadClassFileException
- {
-  return classOrName().classOrName().utfValue();
- }
+	String getEntityClassNameValue() throws BadClassFileException {
+		return classOrName().classOrName().utfValue();
+	}
 
- boolean isZero()
- {
-  return index == 0;
- }
+	boolean isZero() {
+		return index == 0;
+	}
 
- boolean isEqualTo(ConstantRef other)
- {
-  return other.index == index;
- }
+	boolean isEqualTo(ConstantRef other) {
+		return other.index == index;
+	}
 }

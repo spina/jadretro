@@ -41,81 +41,65 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-final class LocalVariableDesc extends ClassLabeledEntity
-{
+final class LocalVariableDesc extends ClassLabeledEntity {
 
- private /* final */ CodeAbsLabel start;
+	private/* final */CodeAbsLabel start;
 
- private /* final */ CodeAbsLabel end;
+	private/* final */CodeAbsLabel end;
 
- private /* final */ ConstantRef name;
+	private/* final */ConstantRef name;
 
- private ConstantRef descriptor;
+	private ConstantRef descriptor;
 
- private /* final */ int index;
+	private/* final */int index;
 
- LocalVariableDesc(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  start = new CodeAbsLabel(in, null);
-  end = new CodeAbsLabel(in, start);
-  name = new ConstantRef(in, classFile, false);
-  descriptor = new ConstantRef(in, classFile, false);
-  index = readUnsignedShort(in);
- }
+	LocalVariableDesc(InputStream in, ClassFile classFile) throws IOException {
+		start = new CodeAbsLabel(in, null);
+		end = new CodeAbsLabel(in, start);
+		name = new ConstantRef(in, classFile, false);
+		descriptor = new ConstantRef(in, classFile, false);
+		index = readUnsignedShort(in);
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  start.mapLabelsPc(indices, false);
-  end.mapLabelsPc(indices, true);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		start.mapLabelsPc(indices, false);
+		end.mapLabelsPc(indices, true);
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  if (start.isInRange(startIndex, endIndex))
-  {
-   if (end.isInRange(startIndex, endIndex + 1))
-    return true;
-   start.setNewIndex(endIndex);
-  }
-   else
-   {
-    if (end.isInRange(startIndex, endIndex))
-     end.setNewIndex(endIndex);
-   }
-  return false;
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		if (start.isInRange(startIndex, endIndex)) {
+			if (end.isInRange(startIndex, endIndex + 1))
+				return true;
+			start.setNewIndex(endIndex);
+		} else if (end.isInRange(startIndex, endIndex)) {
+			end.setNewIndex(endIndex);
+		}
+		return false;
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  start.incLabelIndices(startIndex, incValue);
-  end.incLabelIndices(startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		start.incLabelIndices(startIndex, incValue);
+		end.incLabelIndices(startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  start.rebuildLabelsPc(offsets);
-  end.rebuildLabelsPc(offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		start.rebuildLabelsPc(offsets);
+		end.rebuildLabelsPc(offsets);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  start.writeTo(out);
-  end.writeRelTo(out, start);
-  name.writeTo(out);
-  descriptor.writeTo(out);
-  writeShort(out, index);
- }
+	void writeTo(OutputStream out) throws IOException {
+		start.writeTo(out);
+		end.writeRelTo(out, start);
+		name.writeTo(out);
+		descriptor.writeTo(out);
+		writeShort(out, index);
+	}
 
- ConstantRef descriptor()
- {
-  return descriptor;
- }
+	ConstantRef descriptor() {
+		return descriptor;
+	}
 
- void changeDescriptor(ConstantRef descriptor)
- {
-  this.descriptor = descriptor;
- }
+	void changeDescriptor(ConstantRef descriptor) {
+		this.descriptor = descriptor;
+	}
 }

@@ -40,136 +40,118 @@ package net.sf.jadretro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Vector;
 
-final class FieldMethodEntry extends ClassEntity
-{
+final class FieldMethodEntry extends ClassEntity {
 
- private /* final */ AccessFlags accessFlags;
+	private/* final */AccessFlags accessFlags;
 
- private /* final */ ConstantRef name;
+	private/* final */ConstantRef name;
 
- private ConstantRef descriptor;
+	private ConstantRef descriptor;
 
- private /* final */ Vector attributes;
+	private/* final */Vector attributes;
 
- FieldMethodEntry(AccessFlags accessFlags, ConstantRef name,
-   ConstantRef descriptor)
- {
-  this.accessFlags = accessFlags;
-  this.name = name;
-  this.descriptor = descriptor;
-  attributes = new Vector(2);
- }
+	FieldMethodEntry(AccessFlags accessFlags, ConstantRef name,
+			ConstantRef descriptor) {
+		this.accessFlags = accessFlags;
+		this.name = name;
+		this.descriptor = descriptor;
+		attributes = new Vector(2);
+	}
 
- FieldMethodEntry(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  accessFlags = new AccessFlags(in);
-  name = new ConstantRef(in, classFile, false);
-  descriptor = new ConstantRef(in, classFile, false);
-  attributes = readAttributes(in, classFile);
- }
+	FieldMethodEntry(InputStream in, ClassFile classFile) throws IOException {
+		accessFlags = new AccessFlags(in);
+		name = new ConstantRef(in, classFile, false);
+		descriptor = new ConstantRef(in, classFile, false);
+		attributes = readAttributes(in, classFile);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  accessFlags.writeTo(out);
-  name.writeTo(out);
-  descriptor.writeTo(out);
-  writeToForArray(attributes, out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		accessFlags.writeTo(out);
+		name.writeTo(out);
+		descriptor.writeTo(out);
+		writeToForArray(attributes, out);
+	}
 
- AccessFlags accessFlags()
- {
-  return accessFlags;
- }
+	AccessFlags accessFlags() {
+		return accessFlags;
+	}
 
- ConstantRef name()
- {
-  return name;
- }
+	ConstantRef name() {
+		return name;
+	}
 
- ConstantRef descriptor()
- {
-  return descriptor;
- }
+	ConstantRef descriptor() {
+		return descriptor;
+	}
 
- void changeDescriptor(ConstantRef descriptor)
- {
-  this.descriptor = descriptor;
- }
+	void changeDescriptor(ConstantRef descriptor) {
+		this.descriptor = descriptor;
+	}
 
- void addAttribute(AttributeEntry attrEntry)
- {
-  attributes.addElement(attrEntry);
- }
+	void addAttribute(AttributeEntry attrEntry) {
+		attributes.addElement(attrEntry);
+	}
 
- boolean hasExceptionsSynthetic(boolean isExceptions)
-  throws BadClassFileException
- {
-  String attrName = isExceptions ? AttrRawContent.exceptionsName() :
-                     AttrRawContent.syntheticName();
-  int count = attributes.size();
-  for (int i = 0; i < count; i++)
-   if (((AttributeEntry) attributes.elementAt(i)).getNameValue().equals(
-       attrName))
-    return true;
-  return false;
- }
+	boolean hasExceptionsSynthetic(boolean isExceptions)
+			throws BadClassFileException {
+		String attrName = isExceptions ? AttrRawContent.exceptionsName()
+				: AttrRawContent.syntheticName();
+		int count = attributes.size();
+		for (int i = 0; i < count; i++) {
+			if (((AttributeEntry) attributes.elementAt(i)).getNameValue()
+					.equals(attrName))
+				return true;
+		}
+		return false;
+	}
 
- AttrCodeContent findCode()
- {
-  int count = attributes.size();
-  for (int i = 0; i < count; i++)
-  {
-   AttrContent content = ((AttributeEntry) attributes.elementAt(i)).content();
-   if (content instanceof AttrCodeContent)
-    return (AttrCodeContent) content;
-  }
-  return null;
- }
+	AttrCodeContent findCode() {
+		int count = attributes.size();
+		for (int i = 0; i < count; i++) {
+			AttrContent content = ((AttributeEntry) attributes.elementAt(i))
+					.content();
+			if (content instanceof AttrCodeContent)
+				return (AttrCodeContent) content;
+		}
+		return null;
+	}
 
- int getArgSlotsCount()
-  throws BadClassFileException
- {
-  int argSlots = 0;
-  if (!accessFlags.isStatic())
-   argSlots++;
-  String descrValue = descriptor.utfValue();
-  int endPos = descrValue.lastIndexOf(')');
-  if (endPos <= 0 || descrValue.charAt(0) != '(')
-   throw new BadClassFileException();
-  for (int pos = 1; pos < endPos; pos++)
-  {
-   char ch = descrValue.charAt(pos);
-   argSlots++;
-   if (ch == 'D' || ch == 'J')
-    argSlots++;
-    else
-    {
-     while (ch == '[')
-      ch = descrValue.charAt(++pos);
-     if (ch == 'L')
-     {
-      pos = descrValue.indexOf(';', pos + 1);
-      if (pos < 0 || pos >= endPos)
-       throw new BadClassFileException();
-     }
-    }
-  }
-  return argSlots;
- }
+	int getArgSlotsCount() throws BadClassFileException {
+		int argSlots = 0;
+		if (!accessFlags.isStatic()) {
+			argSlots++;
+		}
+		String descrValue = descriptor.utfValue();
+		int endPos = descrValue.lastIndexOf(')');
+		if (endPos <= 0 || descrValue.charAt(0) != '(')
+			throw new BadClassFileException();
+		for (int pos = 1; pos < endPos; pos++) {
+			char ch = descrValue.charAt(pos);
+			argSlots++;
+			if (ch == 'D' || ch == 'J') {
+				argSlots++;
+			} else {
+				while (ch == '[') {
+					ch = descrValue.charAt(++pos);
+				}
+				if (ch == 'L') {
+					pos = descrValue.indexOf(';', pos + 1);
+					if (pos < 0 || pos >= endPos)
+						throw new BadClassFileException();
+				}
+			}
+		}
+		return argSlots;
+	}
 
- boolean isVoidRetType()
-  throws BadClassFileException
- {
-  String descrValue = descriptor.utfValue();
-  int len = descrValue.length();
-  if (len <= 2)
-   throw new BadClassFileException();
-  return descrValue.charAt(len - 1) == 'V' &&
-          descrValue.charAt(len - 2) == ')';
- }
+	boolean isVoidRetType() throws BadClassFileException {
+		String descrValue = descriptor.utfValue();
+		int len = descrValue.length();
+		if (len <= 2)
+			throw new BadClassFileException();
+		return descrValue.charAt(len - 1) == 'V'
+				&& descrValue.charAt(len - 2) == ')';
+	}
 }

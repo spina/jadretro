@@ -40,62 +40,50 @@ package net.sf.jadretro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Vector;
 
-final class AttrLocalVarsContent extends AttrContent
-{
+final class AttrLocalVarsContent extends AttrContent {
 
- private /* final */ Vector localVariables;
+	private/* final */Vector localVariables;
 
- AttrLocalVarsContent(InputStream in, ClassFile classFile)
-  throws IOException
- {
-  int count = readUnsignedShort(in);
-  localVariables = new Vector(count);
-  while (count-- > 0)
-   localVariables.addElement(new LocalVariableDesc(in, classFile));
- }
+	AttrLocalVarsContent(InputStream in, ClassFile classFile)
+			throws IOException {
+		int count = readUnsignedShort(in);
+		localVariables = new Vector(count);
+		while (count-- > 0) {
+			localVariables.addElement(new LocalVariableDesc(in, classFile));
+		}
+	}
 
- static String nameValue()
- {
-  return "LocalVariableTable";
- }
+	static String nameValue() {
+		return "LocalVariableTable";
+	}
 
- void mapLabelsPc(int[] indices)
-  throws BadClassFileException
- {
-  mapLabelsPcForArray(localVariables, indices);
- }
+	void mapLabelsPc(int[] indices) throws BadClassFileException {
+		mapLabelsPcForArray(localVariables, indices);
+	}
 
- boolean removeLabelsInRange(int startIndex, int endIndex)
- {
-  return removeLabelsInRangeForArray(localVariables, startIndex, endIndex);
- }
+	boolean removeLabelsInRange(int startIndex, int endIndex) {
+		return removeLabelsInRangeForArray(localVariables, startIndex, endIndex);
+	}
 
- void incLabelIndices(int startIndex, int incValue)
- {
-  incLabelIndicesForArray(localVariables, startIndex, incValue);
- }
+	void incLabelIndices(int startIndex, int incValue) {
+		incLabelIndicesForArray(localVariables, startIndex, incValue);
+	}
 
- void rebuildLabelsPc(int[] offsets)
- {
-  rebuildLabelsPcForArray(localVariables, offsets);
- }
+	void rebuildLabelsPc(int[] offsets) {
+		rebuildLabelsPcForArray(localVariables, offsets);
+	}
 
- void writeTo(OutputStream out)
-  throws IOException
- {
-  writeToForArray(localVariables, out);
- }
+	void writeTo(OutputStream out) throws IOException {
+		writeToForArray(localVariables, out);
+	}
 
- int getVarsCount()
- {
-  return localVariables.size();
- }
+	int getVarsCount() {
+		return localVariables.size();
+	}
 
- LocalVariableDesc getVarDescAt(int i)
- {
-  return (LocalVariableDesc) localVariables.elementAt(i);
- }
+	LocalVariableDesc getVarDescAt(int i) {
+		return (LocalVariableDesc) localVariables.elementAt(i);
+	}
 }
