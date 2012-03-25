@@ -13,7 +13,7 @@ rm -rf "$dist_dir"
 mkdir "$dist_dir"
 mkdir "$dist_dir/.jcgo_Out"
 
-$jcgo_home/jcgo -d "$dist_dir/.jcgo_Out" -src $~/goclsp/clsp_asc -src src net.sf.$proj_unix_name.Main @$~/stdpaths.in || exit 1
+$jcgo_home/jcgo -d "$dist_dir/.jcgo_Out" -src $~/goclsp/clsp_asc -src src/main/java net.sf.$proj_unix_name.Main @$~/stdpaths.in || exit 1
 
 mkdir -m 0755 "$dist_dir/$proj_unix_name"
 gcc -o "$dist_dir/$proj_unix_name/$proj_unix_name" -I $jcgo_home/include -I $jcgo_home/include/boehmgc -I $jcgo_home/native -Os -fwrapv -fno-strict-aliasing -freorder-blocks -DJCGO_INTFIT -DJCGO_UNIX -DJCGO_UNIFSYS -DJCGO_USEGCJ -DJCGO_NOJNI -DJCGO_NOSEGV -DEXTRASTATIC=static -DJNIIMPORT=static/**/inline -DJNIEXPORT=JNIIMPORT -DJNUBIGEXPORT=static -DGCSTATICDATA= -DJCGO_GCRESETDLS -DJCGO_NOFP -s "$dist_dir/.jcgo_Out/Main.c" $jcgo_home/libs/x86/linux/libgc.a || exit 1
