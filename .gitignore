@@ -9,4 +9,7 @@
 
 # Eclipse misc config and auto-generated files
 /.checkstyle
+/.classpath
 /.codepro/
+/.project
+/.settings/
