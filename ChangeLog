@@ -1,3 +1,6 @@
+== [1.6.1] (2012-04-05) ==
+
+* Added -q command line option which suppresses some output text.
 
 == [1.6] (2009-12-17) ==
 
