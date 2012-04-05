@@ -1,9 +1,10 @@
-// Running this task will create scripts called gradlew which can be used
-// to invoke gradle without installing it first.
-task createWrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-9'
-}
+apply plugin: 'maven'
+apply plugin: 'signing'
 
+group = 'net.sf.jadretro'
+version = '1.6.1'
+
+// Java configuration
 apply plugin:'java'
 sourceCompatibility = JavaVersion.VERSION_1_3
 targetCompatibility = JavaVersion.VERSION_1_3
@@ -17,4 +18,78 @@ jar {
     manifest {
         attributes("Main-Class": "net.sf.jadretro.Main")
     }
+}
+
+// This specifies that the jadretro jar is the one to upload to Maven Central
+artifacts {
+    archives jar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+ 
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+              authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+ 
+            pom.project {
+               name 'jadretro'
+               packaging 'jar'
+               description 'A Class transformation utility that takes Java 1.4 and 1.5 classes and converts them to Java 1.3 format'
+               url 'http://jadretro.sourceforge.net/'
+ 
+               scm {
+                   url 'scm:git@github.com:spina/jadretro.git'
+                   connection 'scm:git@github.com:spina/jadretro.git'
+                   developerConnection 'scm:git@github.com:spina/spina.git'
+               }
+ 
+               licenses {
+                   license {
+                       name 'GNU General Public License, Version 2.0'
+                       url 'http://www.gnu.org/licenses/gpl-2.0.html'
+                   }
+               }
+ 
+               developers {
+                   developer {
+                       id 'Ivan'
+                       name 'Ivan Maidanski'
+                   }
+                   developer {
+                       id 'Spina'
+                       name 'Andrew Spina'
+                       email 'aispina@gmail.com'
+                   }
+               }
+           }
+ 
+           //mess with the generated pom to set the 'packaging' tag
+           pom.withXml { XmlProvider xmlProvider ->
+               def xml = xmlProvider.asString()
+               def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
+ 
+               pomXml.version[0] + { packaging('jar') }
+ 
+               def newXml = new StringWriter()
+               def printer = new XmlNodePrinter(new PrintWriter(newXml))
+               printer.preserveWhitespace = true
+               printer.print(pomXml)
+               xml.setLength(0)
+               xml.append(newXml.toString())
+           }
+        }
+    }
+}
+
+// Running this task will create scripts called gradlew which can be used
+// to invoke gradle without installing it first.
+task createWrapper(type: Wrapper) {
+    gradleVersion = '1.0-milestone-9'
 }
