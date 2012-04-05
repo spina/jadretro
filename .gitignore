@@ -7,6 +7,10 @@
 /.dist-*/
 /bin/
 
+# Gradle related files
+/build/
+/.gradle/
+
 # Eclipse misc config and auto-generated files
 /.checkstyle
 /.classpath
